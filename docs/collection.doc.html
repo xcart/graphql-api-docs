@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
-    <title>currency</title>
+    <title>collection</title>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
 </head>
 <body class="slds-scrollable--y">
@@ -160,7 +160,7 @@
                 category
             </a>
         </li>
-        <li  title="collection">
+        <li class="slds-is-active" title="collection">
             <a href="collection.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 collection
             </a>
@@ -175,7 +175,7 @@
                 coupon
             </a>
         </li>
-        <li class="slds-is-active" title="currency">
+        <li  title="currency">
             <a href="currency.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 currency
             </a>
@@ -426,8 +426,8 @@
     </div>
     <div class="container">
         <p class="slds-text-title--caps slds-text-color--weak">OBJECT</p>
-        <h1 class="slds-text-heading--large">currency</h1>
-        <div class="slds-text-body--regular"><p>Currency model</p>
+        <h1 class="slds-text-heading--large">collection</h1>
+        <div class="slds-text-body--regular"><p>Object collection</p>
 </div>
     </div>
 </section>
@@ -439,7 +439,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">currency</span> {</li><li></li><li><span class="tab"><span class="meta">code</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">name</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">prefix</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">suffix</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">e</span>: <a class="support type" href="int.doc.html">Int</a> </span></li><li></li><li><span class="tab"><span class="meta">delimiter</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">thousands_delimiter</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:28px"><li><span class="keyword operator ts">type</span> <span class="identifier">collection</span> {</li><li></li><li><span class="tab"><span class="meta">count</span>: <a class="support type" href="int.doc.html">Int</a> </span></li><li></li><li><span class="tab"><span class="meta">objects</span>: [<a class="support type" href="collection_item.doc.html">collection_item</a>] </span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
@@ -450,7 +450,7 @@
             </a>
             Require by
         </h2>
-        <ul class="require-by"><li><a href="app_config.doc.html" title="app_config - Application configuration">app_config<em>Application configuration</em></a><li><li><a href="app_data.doc.html" title="app_data - Application common data">app_data<em>Application common data</em></a><li><li><a href="query.doc.html" title="Query - ">Query<em>null</em></a><li></ul>
+        <ul class="require-by"><li><a href="query.doc.html" title="Query - ">Query<em>null</em></a><li></ul>
     </div>
 </section>
 <footer>
