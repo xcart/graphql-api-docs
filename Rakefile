@@ -18,4 +18,4 @@ task :publish do
     sh "git push"
 end
 
-task update: %w[publish build]
+task update: %w[build publish]
