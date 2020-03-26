@@ -1,0 +1,809 @@
+"""Address model"""
+type address {
+  id: ID
+  type: address_type_enum @deprecated(reason: "Deprecated together with cart.address_list")
+  email: String
+  title: String
+  first_name: String
+  last_name: String
+  country: country
+  state: state
+  county: String
+  city: String
+  address: String
+  zip: String
+  phone: String
+  fax: String
+}
+
+"""Address input type"""
+input address_input {
+  email: String
+  title: String
+  first_name: String
+  last_name: String
+  country_code: String
+  state_code: String
+  county: String
+  city: String
+  address: String
+  zip: String
+  phone: String
+  fax: String
+}
+
+"""Address type enumeration"""
+enum address_type_enum {
+  """Shipping address"""
+  SHIPPING_TYPE
+
+  """Billing address"""
+  BILLING_TYPE
+}
+
+"""Application configuration"""
+type app_config {
+  store_platform: String
+  store_version: String
+  currency: currency
+  default_language: language
+  default_country: country
+  date_format: String
+  time_format: String
+  contact_email: String
+  contact_phone: String
+  contact_address: String
+  contact_fax: String
+  terms_and_conditions: String
+  is_webview_checkout_flow: Boolean
+  email_as_login: Boolean
+}
+
+"""Application common data"""
+type app_data {
+  currencies: [currency]
+  languages: [language]
+  countries: [country]
+  states: [state]
+  profile_fields: [profile_field]
+  memberships: [membership]
+  modules: [module]
+  home_page_widgets: [homePageWidget]
+}
+
+"""User authentication input type"""
+input AuthInput {
+  login: String
+  password: String
+}
+
+"""Banner model"""
+type banner {
+  id: ID
+  image_url: String
+  type: String
+  data: String
+}
+
+"""Cart model"""
+type cart {
+  id: ID
+  token: String
+  cart_url: String
+  checkout_url: String
+  webview_flow_url: String
+  user: user
+  address_list: [address] @deprecated(reason: "Use cart.shipping_address and cart.billing_address instead separately. See user.address_list for more info.")
+  shipping_address: address
+  billing_address: address
+  items: [orderItem]
+  payment: payment
+  shipping: shipping
+  coupons: [coupon]
+
+  """Available shipping methods for cart"""
+  shipping_methods: [shipping]
+
+  """Available payment methods for cart"""
+  payment_methods: [payment]
+  notes: String
+  markups_list: [String]
+  total: Float
+  total_amount: Int
+  checkout_ready: Boolean
+  errors: [cart_error]
+}
+
+"""Cart error enumeration"""
+enum cart_error {
+  """Cart is empty"""
+  EMPTY_CART
+
+  """No payment selected"""
+  NO_PAYMENT_SELECTED
+
+  """No shipping selected"""
+  NO_SHIPPING_SELECTED
+
+  """No shipping available"""
+  NO_SHIPPING_AVAILABLE
+
+  """No shipping address"""
+  NO_SHIPPING_ADDRESS
+}
+
+"""Category model"""
+type category implements collection_item {
+  id: ID
+  category_name: String
+  description: String
+  category_url: String
+  image_url: String
+  banner_url: String
+  parent_id: ID
+  products_count: Int
+  subcategories_count: Int
+  subcategories(
+    """Subset from"""
+    from: Int
+
+    """Subset size"""
+    size: Int
+  ): [category]
+  products(
+    """Subset from"""
+    from: Int
+
+    """Subset size"""
+    size: Int
+
+    """Filters"""
+    filters: products_filter_input
+  ): [product]
+  filters: [category_products_filter]
+}
+
+"""Category products filter model"""
+union category_products_filter = select_field | switch_field | text_field | value_range_field
+
+"""Client input type"""
+input ClientInput {
+  unique_id: String!
+  app_id: String
+  app_version: String
+  push_id: String
+  platform: String
+  system_name: String
+  system_version: String
+  device_name: String
+  manufacturer: String
+  model: String
+}
+
+"""Object collection"""
+type collection {
+  count: Int
+  objects: [collection_item]
+}
+
+"""Object as a part of collection"""
+interface collection_item {
+  id: ID
+}
+
+"""Collection type enumeration"""
+enum collection_type {
+  """Products collection"""
+  products
+
+  """Categories collection"""
+  categories
+}
+
+"""Country model"""
+type country {
+  code: String
+  name: String
+  states: [state]
+}
+
+"""Coupon model"""
+type coupon {
+  id: ID
+  code: String
+  name: String
+  rate: Float
+  type: String
+}
+
+"""Currency model"""
+type currency {
+  code: String
+  name: String
+  prefix: String
+  suffix: String
+  e: Int
+  delimiter: String
+  thousands_delimiter: String
+}
+
+"""FAQ model"""
+type faq {
+  question: String
+  answer: String
+}
+
+"""Products filter view type enumeration"""
+enum form_field_type {
+  FIELD_TYPE_TEXT
+  FIELD_TYPE_EMAIL
+  FIELD_TYPE_PHONE
+  FIELD_TYPE_SEARCH
+  FIELD_TYPE_SELECT
+  FIELD_TYPE_VALUE_RANGE
+  FIELD_TYPE_DATE
+  FIELD_TYPE_DATE_RANGE
+  FIELD_TYPE_SWITCH
+  FIELD_TYPE_QUANTITY
+}
+
+"""Home page widgets information"""
+type homePageWidget {
+  display_name: String
+  service_name: String
+  enabled: Boolean
+  type: String
+  params: widgetParams
+}
+
+"""Language model"""
+type language {
+  code: String
+  name: String
+}
+
+input list_order_filter {
+  """Property name"""
+  name: String
+
+  """Order: asc or desc"""
+  order: String
+}
+
+"""Membership model"""
+type membership {
+  id: ID
+  name: String
+}
+
+"""Module model"""
+type module {
+  name: String
+  enabled: Boolean
+}
+
+type Mutation {
+  """Add product to cart"""
+  addProductToCart(product_id: ID!, amount: Int, attributes: [String]): cart
+
+  """Remove orderItem from cart"""
+  removeCartItem(item_id: ID!): cart
+
+  """Change orderItem amount"""
+  changeItemAmountByModifier(item_id: ID!, amount_modifier: Int!): cart
+
+  """Change orderItem amount"""
+  changeItemAmount(item_id: ID!, amount: Int!): cart
+
+  """Change address"""
+  changeAddress(type: String!, address: address_input!): cart
+
+  """Change payment method of the cart"""
+  changePaymentMethod(payment_id: ID!): cart
+
+  """Change payment method fields for cart"""
+  changePaymentFields(fields: [payment_fields_input]!): cart
+
+  """Change shipping method of the cart"""
+  changeShippingMethod(shipping_id: ID!): cart
+
+  """Change customer notes of the cart"""
+  changeCustomerNotes(notes: String!): cart
+
+  """Select address by id"""
+  selectAddress(type: String!, address_id: ID!): cart
+
+  """Remove address from address book"""
+  deleteUserAddress(address_id: ID!): user
+
+  """Remove address from address book"""
+  changeUserAddress(address_id: ID!, address: address_input!): user
+
+  """Update profile"""
+  updateUserRegisterData(oldPassword: String, data: UserUpdateInput!): user
+
+  """Get auth token for plain client ID or optionally for system user"""
+  auth(auth: AuthInput!, client: ClientInput): String
+
+  """Recover password for provided login"""
+  recoverPassword(login: String!): Boolean
+
+  """Register profile"""
+  register(data: UserRegisterInput!, client: ClientInput): registrationResult
+
+  """Add product to wishlist"""
+  addProductToWishlist(product_id: ID!): wishlist
+
+  """Remove product from wishlist"""
+  removeProductFromWishlist(product_id: ID!): wishlist
+
+  """Put offer for product"""
+  putOffer(name: String!, email: String!, offer_qty: Int!, offer_price: Float!, product_id: ID!): offer
+
+  """Add coupon to cart"""
+  addCartCoupon(code: String!): cart
+
+  """Remove coupon from cart"""
+  removeCartCoupon(code: String!): cart
+
+  """Send message to service"""
+  contactUs(name: String!, email: String!, subject: String!, message: String!, login: String, company: String, address: String, city: String, country: String, state: String, zipcode: String, phone: String, fax: String, url: String, department: String): String
+
+  """Sign-up for emails"""
+  signUpForNews(email: String!): Boolean
+}
+
+"""Offer model"""
+type offer {
+  id: ID
+  customer_notes: String
+  admin_notes: String
+  status: String
+  status_name: String
+  product_id: ID
+  product_name: String
+  product_price: Float
+  offer_price: Float
+  offer_amount: Int
+  date: String
+}
+
+"""OrderItem option model"""
+type order_item_options {
+  id: ID
+  name: String
+  value: String
+  option_id: ID
+  option_value_id: ID
+}
+
+"""OrderItem model"""
+type orderItem {
+  id: ID
+  product: product
+  sku: String
+  name: String
+  price: Float
+  amount: Int
+  total: Float
+  options: [order_item_options]
+  taxes: [String]
+  is_booking: Boolean
+  date_from: String
+  date_to: String
+}
+
+"""Payment model"""
+type payment {
+  id: ID
+  service_name: String
+  payment_name: String
+  details: String
+  fields: [payment_field]
+}
+
+"""Payment field model"""
+type payment_field {
+  id: ID
+  name: String
+  value: String
+}
+
+input payment_fields_input {
+  """Payment fields id"""
+  id: ID
+
+  """Payment fields value"""
+  value: String
+}
+
+"""Product model"""
+type product implements collection_item {
+  id: ID
+  product_code: String
+  product_name: String
+  short_description: String
+  short_description_html: String
+  description: String
+  description_html: String
+  small_image_url: String
+  image_url: String
+  images: [String]
+  product_url: String
+  weight: Float
+  inventory_enabled: Boolean
+  amount: Int
+  price: Float
+  display_price: Float
+  review_rate: Float
+  votes_count: Int
+  enabled: Boolean
+  available: Boolean
+  coming_soon: Boolean
+  expected_date: Int
+  attributes: [product_attribute_group]
+  options: [product_option]
+  on_sale: Boolean
+  sale_value: Float
+  sale_type: String
+  bookable: Boolean
+  is_wishlisted: Boolean
+  stickers: [product_sticker]
+}
+
+"""Product attribute"""
+type product_attribute {
+  label: String
+  value: String
+  group: String
+}
+
+"""Product attribute group"""
+type product_attribute_group {
+  id: ID
+  label: String
+  pos: Int
+  attributes: [product_attribute]
+}
+
+"""Product option"""
+type product_option {
+  id: ID
+  option_name: String
+  option_type: String
+  options: [product_option_value]
+}
+
+"""Product option value"""
+type product_option_value {
+  id: ID
+  value: String
+  default: Boolean
+  modifier_type: String
+  modifier_value: Float
+}
+
+"""Product option"""
+type product_sticker {
+  name: String
+  text_color: String
+  bg_color: String
+}
+
+"""Products filter input"""
+input products_filter_input {
+  """Search query string"""
+  searchFilter: String
+
+  """Search products by stock status"""
+  stockFilter: Boolean
+
+  """Custom json-encoded filters"""
+  custom: [String]
+
+  """Category id to filter"""
+  categoryId: ID
+
+  """Search in subcategories"""
+  inSubcats: Boolean
+
+  """Search bestsellers"""
+  bestsellers: Boolean
+
+  """Search featured products"""
+  featured: Boolean
+
+  """Search new arrived products"""
+  new_arrivals: Boolean
+
+  """Search products on sale"""
+  sale: Boolean
+
+  """Search enabled products"""
+  enabled: Boolean
+
+  """Search products by stock status"""
+  priceFilter: value_range_input
+
+  """Order by"""
+  orderByFilter: list_order_filter
+}
+
+"""Profile field (aka addressField) model"""
+type profile_field {
+  service_name: String
+  type: String
+  name: String
+  placeholder: String
+  required: Boolean
+}
+
+type Query {
+  """Single product"""
+  product(
+    """Product id"""
+    id: ID!
+  ): product
+
+  """Products list"""
+  products(
+    """Subset from"""
+    from: Int
+
+    """Subset size"""
+    size: Int
+
+    """Filters"""
+    filters: products_filter_input
+  ): [product]
+
+  """Single category"""
+  category(
+    """Category id"""
+    id: ID!
+  ): category
+
+  """Categories list"""
+  categories(
+    """Subset from"""
+    from: Int
+
+    """Subset size"""
+    size: Int
+
+    """Parent category ID"""
+    parent_id: ID
+
+    """Search query string"""
+    search: String
+
+    """Search only enabled categories"""
+    enabled: Boolean
+  ): [category]
+
+  """Catalog"""
+  catalog: [category]
+
+  """Countries list"""
+  countries: [country]
+
+  """States list"""
+  states: [state]
+
+  """Currencies list"""
+  currencies: [currency]
+
+  """Banners"""
+  banners: [banner]
+
+  """Current cart"""
+  cart: cart
+
+  """User data"""
+  user(
+    """User id (current user id is used if not provided)"""
+    id: ID
+  ): user
+
+  """FAQ"""
+  faq: [faq]
+
+  """Offers list"""
+  offers: [offer]
+
+  """Wishlist"""
+  wishlist: wishlist
+
+  """Application configuration"""
+  appConfig: app_config
+
+  """Application common Data"""
+  appData: app_data
+
+  """Object collection"""
+  collection(
+    """Object type"""
+    type: collection_type!
+
+    """Subset from"""
+    from: Int
+
+    """Subset size"""
+    size: Int
+
+    """Filters"""
+    filters: products_filter_input
+
+    """Parent category ID"""
+    parent_id: ID
+
+    """Search query string"""
+    search: String
+
+    """Search only enabled categories"""
+    enabled: Boolean
+  ): collection
+}
+
+"""Registration result"""
+type registrationResult {
+  id: ID
+  jwt: String
+  user: user
+}
+
+"""Select Field model"""
+type select_field {
+  name: String
+  label: String
+  type: form_field_type
+  defaultValue: String
+  required: Boolean
+  options: [select_field_value]
+  multiple: Boolean
+}
+
+"""Form Field model"""
+type select_field_value {
+  label: String
+  value: String
+}
+
+"""Shipping model"""
+type shipping {
+  id: ID
+  shipping_name: String
+  details: String
+  rate: Float
+}
+
+"""State model"""
+type state {
+  code: String
+  name: String
+  country: country
+}
+
+"""Switch Field model"""
+type switch_field {
+  name: String
+  label: String
+  type: form_field_type
+  defaultValue: String
+  required: Boolean
+}
+
+"""Text Field model"""
+type text_field {
+  name: String
+  label: String
+  type: form_field_type
+  defaultValue: String
+  required: Boolean
+}
+
+"""User model"""
+type user {
+  id: ID
+  user_type: user_type
+  title: String
+  first_name: String
+  last_name: String
+  email: String
+  phone: String
+  enabled: Boolean
+  registered: Boolean
+  registered_date: Int
+  last_login_date: Int
+  language: String
+  address_list: [address]
+  orders_count: Int
+  vendor_info: [String]
+  auth_id: String
+  auth_token: String
+  login: String
+  company: String
+  url: String
+  tax_number: String
+  contact_us_url: String
+  account_details_url: String
+  orders_list_url: String
+  address_book_url: String
+  messages_url: String
+}
+
+"""User type enumeration"""
+enum user_type {
+  """Customer"""
+  USER_TYPE_CUSTOMER
+
+  """Anonymous customer"""
+  USER_TYPE_ANONYMOUS
+
+  """Staff"""
+  USER_TYPE_STAFF
+
+  """Vendor"""
+  USER_TYPE_VENDOR
+}
+
+"""Register user input type"""
+input UserRegisterInput {
+  email: String!
+  password: String!
+  password_conf: String!
+  login: String
+  first_name: String
+  last_name: String
+  company: String
+  url: String
+  tax_number: String
+}
+
+"""Update user input type"""
+input UserUpdateInput {
+  email: String!
+  password: String
+  password_conf: String
+  old_password: String
+  login: String
+  first_name: String
+  last_name: String
+  company: String
+  url: String
+  tax_number: String
+}
+
+"""Value Range Field model"""
+type value_range_field {
+  name: String
+  label: String
+  type: form_field_type
+  defaultValue: String
+  required: Boolean
+  minValue: Float
+  maxValue: Float
+}
+
+input value_range_input {
+  """From value"""
+  from: Float
+
+  """To value"""
+  to: Float
+}
+
+"""widget params data"""
+type widgetParams {
+  """JSON-encoded object for use in products query"""
+  filters: String
+}
+
+"""WishList model"""
+type wishlist {
+  id: ID
+  user_id: ID
+  count: Int
+  items: [product]
+}
+
