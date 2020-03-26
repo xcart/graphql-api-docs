@@ -4,6 +4,8 @@ title: "X-Cart GraphQL API Provider"
 
 # GraphQL API Connector Documentation
 
+**Table of contents**
+
 - [Authentication](#authentication)
 - [Module-related queries](#module-related-queries)
 - [Examples](#examples)
