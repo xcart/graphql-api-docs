@@ -4,6 +4,8 @@ title: "X-Cart GraphQL API Provider"
 
 # GraphQL API Connector Documentation
 
+[TOC]
+
 X-Cart 5 can be enhanced with the following add-ons to provide GraphQL compatible catalog API, suitable for making alternative frontend apps (e.g. mobile apps):
 
 *   QSL\GraphQLApi (v5.4.0)
@@ -22,7 +24,7 @@ This demo store storefront can be accessed by the URL: [https://mobile.x-cart.co
 The API can be easily integrated via such solutions like the whole universe of different Apollo Clients ([https://www.apollographql.com/](https://www.apollographql.com/)).
 
 
-## Authentication
+## Authentication {#authentication}
 
 Request authentication is JWT-based. Most of the query objects can be accessed without any token - replicating how the website storefront can be accessed. User-related data, such as customer orders information, address and personal can only be accessed by providing the user JWT token.
 
@@ -32,13 +34,17 @@ Any requests to protected areas should include a special GraphQL variable called
 
 This variable should be an object of the following string fields: 
 
+
+
 *   jwt: Client JWT token
 *   cur: Currency 2-char code
 *   lng: Language 2-char code
 
-### Receiving token for registered user
+
+### Receiving token for registered user {#receiving-token-for-registered-user}
 
 The JWT can be received via the following mutation:
+
 
 ```
 mutation Auth($auth: AuthInput!) {
@@ -46,7 +52,9 @@ mutation Auth($auth: AuthInput!) {
 }
 ```
 
+
 Variables:
+
 
 ```
 {
@@ -57,12 +65,16 @@ Variables:
 }
 ```
 
+
 As you can see, $auth should be an object of the following string fields:
+
+
 
 *   login
 *   password
 
 If the login \ password is correct, this request will return the similar output:
+
 
 ```
 {
@@ -72,7 +84,9 @@ If the login \ password is correct, this request will return the similar output:
 }
 ```
 
-### Receiving token for anonymous user
+
+
+### Receiving token for anonymous user {#receiving-token-for-anonymous-user}
 
 By default, no persistent data is being stored by the backend during API access, therefore there are no tokens and cart ids. However, right after a successful mutation that changes the cart to be non-empty (e.g. after adding the product to cart), the **<code>cart</code>** object will have a <strong><code>token</code></strong> param which can be used to continue making requests with a single session. Temporary anonymous user will be created on the backend.
 
@@ -107,7 +121,7 @@ The result will contain a token to be used in the next requests:
 
 
 
-### Token usage
+### Token usage {#token-usage}
 
 You can use received jwt string in order to get access to any protected user information simply by including **<code>context</code>** variable in all requests:
 
@@ -162,7 +176,7 @@ Each response object has the obligatory `data` property and can include `errors`
 The API access isn’t protected with external application identifiers check - but this can be improved with some custom modification.
 
 
-## Module-related queries
+## Module-related queries {#module-related-queries}
 
 Some queries in this GraphQL API are being exclusively resolved by various X-Cart addons, e.g. My Wishlist addon, Put an Offer addon. In case when required module is not enabled in the system, the API will return the similar response:
 
@@ -210,12 +224,12 @@ You can also fetch the list of the installed addons in order to control the avai
 When the certain addon name (e.g. QSL-MyWishlist) is either non-present in the list or marked as disabled, you can safely disable the corresponding features in your app.
 
 
-## Examples
+## Examples {#examples}
 
 Here are the few examples of making GraphQL queries:
 
 
-### Getting the collection of products filtered by some criteria
+### Getting the collection of products filtered by some criteria {#getting-the-collection-of-products-filtered-by-some-criteria}
 
 
 ```
@@ -248,13 +262,9 @@ With the variables:
 
 
 
-### Searching for products
+### Searching for products {#searching-for-products}
 
-Use the 
-
-<p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "Getting the collection of products"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[Getting the collection of products](#heading=h.88nfi2upk70n) request with the following filters:
+Use the [Getting the collection of products](#getting-the-collection-of-products-filtered-by-some-criteria) request with the following filters:
 
 With the variables: 
 
@@ -269,7 +279,7 @@ With the variables:
 
 
 
-### Getting user data (requires auth)
+### Getting user data (requires auth) {#getting-user-data-requires-auth}
 
 
 ```
@@ -304,7 +314,7 @@ Variables
 The *_url fields return a special URL leading to a stripped-down mobile-ready version of the page (suitable for WebView).
 
 
-### Getting language information
+### Getting language information {#getting-language-information}
 
 
 ```
@@ -323,7 +333,7 @@ query {
 
 
 
-### Getting product collections metadata
+### Getting product collections metadata {#getting-product-collections-metadata}
 
 
 ```
@@ -346,7 +356,7 @@ query {
 The path `appData.home_page_widgets.params.filters` contains JSON-encoded string of `"filters"`to use in query variables in order to obtain certain collection.
 
 
-### Getting wishlist data (requires auth)
+### Getting wishlist data (requires auth) {#getting-wishlist-data-requires-auth}
 
 
 ```
@@ -365,7 +375,7 @@ The path `appData.home_page_widgets.params.filters` contains JSON-encoded string
 
 
 
-### Register new user
+### Register new user {#register-new-user}
 
 
 ```
@@ -401,7 +411,7 @@ Variables
 
 
 
-### Read user address book (auth protected)
+### Read user address book (auth protected) {#read-user-address-book-auth-protected}
 
 
 ```
@@ -467,7 +477,7 @@ Result:
 
 
 
-### Update address in address book (auth protected)
+### Update address in address book (auth protected) {#update-address-in-address-book-auth-protected}
 
 
 ```
@@ -495,7 +505,7 @@ Variables:
 
 
 
-### Delete address from address book (auth protected)
+### Delete address from address book (auth protected) {#delete-address-from-address-book-auth-protected}
 
 
 ```
@@ -510,7 +520,7 @@ mutation {
 
 
 
-## Checkout flow
+## Checkout flow {#checkout-flow}
 
 The API can be used to place orders on the store and provide a customer with an ability to perform the payment on the selected payment processor page. Due to complexity, it has to be implemented in a certain way. The general flow is based on the UI, split by 3 major steps: 
 
@@ -534,43 +544,15 @@ Communication protocol is usually the following:
 
 
 
-1. Retrieve latest cart state by using 
-
-<p id="gdcalert2" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "CheckoutShippingPageQuery"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert3">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[CheckoutShippingPageQuery](#heading=h.qbapur5dtwdk)
-2. Specify the address with 
-
-<p id="gdcalert3" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "ChangeShippingAddress"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert4">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[ChangeShippingAddress](#heading=h.vksp27vcty7o) mutation (this might also change billing address & shipping methods, so we refetch this data too)
+1. Retrieve latest cart state by using [CheckoutShippingPageQuery](#checkoutshippingpagequery)
+2. Specify the address with [ChangeShippingAddress](#changeshippingaddress-mutation-might-change-both-addresses) mutation (this might also change billing address & shipping methods, so we refetch this data too)
     1. You can also change billing address by changing mutation type to “billing”
     2. Alternatively, you can select one of the existing address by using SelectAddress mutation.
-3. Choose shipping option with 
-
-<p id="gdcalert4" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "ChangeShippingMethod"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert5">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[ChangeShippingMethod](#heading=h.crlk8sqo5ki8) mutation
-4. Refresh the state with 
-
-<p id="gdcalert5" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "CheckoutPaymentPageQuery"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert6">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[CheckoutPaymentPageQuery](#heading=h.ni4avkpz8hnn)
-5. Select payment method with 
-
-<p id="gdcalert6" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "ChangePaymentMethod"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert7">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[ChangePaymentMethod](#heading=h.4180kuwhtlfh) mutation
-6. Set payment options (if required) with 
-
-<p id="gdcalert7" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "ChangePaymentFields"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert8">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[ChangePaymentFields](#heading=h.2015txl3nlq0) mutation
-7. (OPTIONAL) Set customer notes with 
-
-<p id="gdcalert8" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "ChangeCustomerNotes"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert9">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[ChangeCustomerNotes](#heading=h.xxxf89w03rj) mutation
+3. Choose shipping option with [ChangeShippingMethod](#changeshippingmethod-mutation) mutation
+4. Refresh the state with [CheckoutPaymentPageQuery](#checkoutpaymentpagequery)
+5. Select payment method with [ChangePaymentMethod](#changepaymentmethod-mutation) mutation
+6. Set payment options (if required) with [ChangePaymentFields](#changepaymentfields-mutation) mutation
+7. (OPTIONAL) Set customer notes with [ChangeCustomerNotes](#changecustomernotes-mutation) mutation
 
 Once these steps are done and the cart is in `checkout_ready = true` state, you should render a WebView by the **checkout_url** URL with the following injected JS patch:
 
@@ -608,7 +590,7 @@ The aforementioned WebView should handle onMessage, receiving the order stats in
 This data will allow you to render a proper final screen with order details.
 
 
-### Payment method options
+### Payment method options {#payment-method-options}
 
 You can retrieve available payment options from **payment_methods** prop of the **cart** object:
 
@@ -682,11 +664,7 @@ In general, all payment_methods won’t require any fields to set up before perf
 ```
 
 
-In order to perform successful checkout with such method, you have perform a 
-
-<p id="gdcalert9" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "ChangePaymentFields mutation"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert10">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[ChangePaymentFields mutation](#heading=h.2015txl3nlq0) with a similar request:
+In order to perform successful checkout with such method, you have perform a [ChangePaymentFields mutation](#changepaymentfields-mutation) with a similar request:
 
 
 ```
@@ -722,10 +700,10 @@ With vars:
 
 
 
-### Checkout-related Queries & Mutations
+### Checkout-related Queries & Mutations {#checkout-related-queries-&-mutations}
 
 
-#### CheckoutShippingPageQuery
+#### CheckoutShippingPageQuery {#checkoutshippingpagequery}
 
 
 ```
@@ -795,7 +773,7 @@ query CheckoutShippingPageQuery {
 
 
 
-#### ChangeShippingMethod mutation
+#### ChangeShippingMethod mutation {#changeshippingmethod-mutation}
 
 
 ```
@@ -820,7 +798,7 @@ mutation ChangeShippingMethod($shippingMethodId: ID!) {
 
 
 
-#### ChangeShippingAddress mutation (might change both addresses)
+#### ChangeShippingAddress mutation (might change both addresses) {#changeshippingaddress-mutation-might-change-both-addresses}
 
 
 ```
@@ -902,7 +880,7 @@ The **address**variable should contain **country_code**, **state_code**propertie
 
 
 
-#### CheckoutPaymentPageQuery
+#### CheckoutPaymentPageQuery {#checkoutpaymentpagequery}
 
 
 ```
@@ -938,7 +916,7 @@ query CheckoutPaymentPageQuery {
 
 
 
-#### ChangePaymentMethod mutation
+#### ChangePaymentMethod mutation {#changepaymentmethod-mutation}
 
 
 ```
@@ -959,7 +937,7 @@ mutation ChangePaymentMethod($paymentMethodId: ID!) {
 
 
 
-#### ChangePaymentFields mutation
+#### ChangePaymentFields mutation {#changepaymentfields-mutation}
 
 
 ```
@@ -980,7 +958,7 @@ mutation ChangePaymentFields($fields: [payment_fields_input]!) {
 
 
 
-#### ChangeCustomerNotes mutation
+#### ChangeCustomerNotes mutation {#changecustomernotes-mutation}
 
 
 ```
@@ -992,13 +970,17 @@ mutation ChangeShippingMethod($notes: String!) {
  }
 ```
 
-### Coupons feature (requires “Coupons” add-on)
+
+
+### Coupons feature (requires “Coupons” add-on) {#coupons-feature-requires-“coupons”-add-on}
 
 You can add coupons to the cart by using **addCartCoupon(code)** mutation and remove coupons by using **removeCartCoupon(code)**  mutation. If coupon is valid, it will be applied to the cart and the cart **total** value will be changed. 
 
 The **coupons**property of the cart will contain currently applied coupons.
 
 Also, there is a list of error messages in case coupon code is invalid or cannot be applied for a reason (the message is translated according to the current language):
+
+
 
 *   No coupon for **CODE**
 *   Sorry, the coupon you entered is invalid. Make sure the coupon code is spelled correctly
