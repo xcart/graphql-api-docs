@@ -3,6 +3,7 @@ require 'graphql-docs'
 task default: %w[build]
 
 task :build do
+    puts "building docs"
     filename = "./schema.graphql"
     output_dir = "./docs/"
     landing_pages = Hash.new
