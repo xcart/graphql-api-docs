@@ -4,7 +4,9 @@ title: "X-Cart GraphQL API Provider"
 
 # GraphQL API Connector Documentation
 
+
 [TOC]
+
 
 X-Cart 5 can be enhanced with the following add-ons to provide GraphQL compatible catalog API, suitable for making alternative frontend apps (e.g. mobile apps):
 
@@ -24,7 +26,7 @@ This demo store storefront can be accessed by the URL: [https://mobile.x-cart.co
 The API can be easily integrated via such solutions like the whole universe of different Apollo Clients ([https://www.apollographql.com/](https://www.apollographql.com/)).
 
 
-## Authentication {#authentication}
+## Authentication
 
 Request authentication is JWT-based. Most of the query objects can be accessed without any token - replicating how the website storefront can be accessed. User-related data, such as customer orders information, address and personal can only be accessed by providing the user JWT token.
 
@@ -41,7 +43,7 @@ This variable should be an object of the following string fields:
 *   lng: Language 2-char code
 
 
-### Receiving token for registered user {#receiving-token-for-registered-user}
+### Receiving token for registered user
 
 The JWT can be received via the following mutation:
 
@@ -86,9 +88,9 @@ If the login \ password is correct, this request will return the similar output:
 
 
 
-### Receiving token for anonymous user {#receiving-token-for-anonymous-user}
+### Receiving token for anonymous user
 
-By default, no persistent data is being stored by the backend during API access, therefore there are no tokens and cart ids. However, right after a successful mutation that changes the cart to be non-empty (e.g. after adding the product to cart), the **<code>cart</code>** object will have a <strong><code>token</code></strong> param which can be used to continue making requests with a single session. Temporary anonymous user will be created on the backend.
+By default, no persistent data is being stored by the backend during API access, therefore there are no tokens and cart ids. However, right after a successful mutation that changes the cart to be non-empty (e.g. after adding the product to cart), the `cart` object will have a `token` param which can be used to continue making requests with a single session. Temporary anonymous user will be created on the backend.
 
 For instance, you can receive a jwt after making such mutation:
 
@@ -121,9 +123,9 @@ The result will contain a token to be used in the next requests:
 
 
 
-### Token usage {#token-usage}
+### Token usage
 
-You can use received jwt string in order to get access to any protected user information simply by including **<code>context</code>** variable in all requests:
+You can use received jwt string in order to get access to any protected user information simply by including `context` variable in all requests:
 
 
 ```
@@ -176,7 +178,7 @@ Each response object has the obligatory `data` property and can include `errors`
 The API access isn’t protected with external application identifiers check - but this can be improved with some custom modification.
 
 
-## Module-related queries {#module-related-queries}
+## Module-related queries
 
 Some queries in this GraphQL API are being exclusively resolved by various X-Cart addons, e.g. My Wishlist addon, Put an Offer addon. In case when required module is not enabled in the system, the API will return the similar response:
 
@@ -224,12 +226,12 @@ You can also fetch the list of the installed addons in order to control the avai
 When the certain addon name (e.g. QSL-MyWishlist) is either non-present in the list or marked as disabled, you can safely disable the corresponding features in your app.
 
 
-## Examples {#examples}
+## Examples
 
 Here are the few examples of making GraphQL queries:
 
 
-### Getting the collection of products filtered by some criteria {#getting-the-collection-of-products-filtered-by-some-criteria}
+### Getting the collection of products filtered by some criteria
 
 
 ```
@@ -262,7 +264,7 @@ With the variables:
 
 
 
-### Searching for products {#searching-for-products}
+### Searching for products
 
 Use the [Getting the collection of products](#getting-the-collection-of-products-filtered-by-some-criteria) request with the following filters:
 
@@ -279,7 +281,7 @@ With the variables:
 
 
 
-### Getting user data (requires auth) {#getting-user-data-requires-auth}
+### Getting user data (requires auth)
 
 
 ```
@@ -311,10 +313,10 @@ Variables
 ```
 
 
-The *_url fields return a special URL leading to a stripped-down mobile-ready version of the page (suitable for WebView).
+The `*_url` fields return a special URL leading to a stripped-down mobile-ready version of the page (suitable for WebView).
 
 
-### Getting language information {#getting-language-information}
+### Getting language information
 
 
 ```
@@ -333,7 +335,7 @@ query {
 
 
 
-### Getting product collections metadata {#getting-product-collections-metadata}
+### Getting product collections metadata
 
 
 ```
@@ -356,7 +358,7 @@ query {
 The path `appData.home_page_widgets.params.filters` contains JSON-encoded string of `"filters"`to use in query variables in order to obtain certain collection.
 
 
-### Getting wishlist data (requires auth) {#getting-wishlist-data-requires-auth}
+### Getting wishlist data (requires auth)
 
 
 ```
@@ -375,7 +377,7 @@ The path `appData.home_page_widgets.params.filters` contains JSON-encoded string
 
 
 
-### Register new user {#register-new-user}
+### Register new user
 
 
 ```
@@ -411,7 +413,7 @@ Variables
 
 
 
-### Read user address book (auth protected) {#read-user-address-book-auth-protected}
+### Read user address book (auth protected) 
 
 
 ```
@@ -477,7 +479,7 @@ Result:
 
 
 
-### Update address in address book (auth protected) {#update-address-in-address-book-auth-protected}
+### Update address in address book (auth protected) 
 
 
 ```
@@ -505,7 +507,7 @@ Variables:
 
 
 
-### Delete address from address book (auth protected) {#delete-address-from-address-book-auth-protected}
+### Delete address from address book (auth protected)
 
 
 ```
@@ -520,7 +522,7 @@ mutation {
 
 
 
-## Checkout flow {#checkout-flow}
+## Checkout flow 
 
 The API can be used to place orders on the store and provide a customer with an ability to perform the payment on the selected payment processor page. Due to complexity, it has to be implemented in a certain way. The general flow is based on the UI, split by 3 major steps: 
 
@@ -590,7 +592,7 @@ The aforementioned WebView should handle onMessage, receiving the order stats in
 This data will allow you to render a proper final screen with order details.
 
 
-### Payment method options {#payment-method-options}
+### Payment method options 
 
 You can retrieve available payment options from **payment_methods** prop of the **cart** object:
 
@@ -700,10 +702,10 @@ With vars:
 
 
 
-### Checkout-related Queries & Mutations {#checkout-related-queries-&-mutations}
+### Checkout-related Queries & Mutations 
 
 
-#### CheckoutShippingPageQuery {#checkoutshippingpagequery}
+#### CheckoutShippingPageQuery
 
 
 ```
@@ -773,7 +775,7 @@ query CheckoutShippingPageQuery {
 
 
 
-#### ChangeShippingMethod mutation {#changeshippingmethod-mutation}
+#### ChangeShippingMethod mutation 
 
 
 ```
@@ -798,7 +800,7 @@ mutation ChangeShippingMethod($shippingMethodId: ID!) {
 
 
 
-#### ChangeShippingAddress mutation (might change both addresses) {#changeshippingaddress-mutation-might-change-both-addresses}
+#### ChangeShippingAddress mutation (might change both addresses) 
 
 
 ```
@@ -880,7 +882,7 @@ The **address**variable should contain **country_code**, **state_code**propertie
 
 
 
-#### CheckoutPaymentPageQuery {#checkoutpaymentpagequery}
+#### CheckoutPaymentPageQuery
 
 
 ```
@@ -916,7 +918,7 @@ query CheckoutPaymentPageQuery {
 
 
 
-#### ChangePaymentMethod mutation {#changepaymentmethod-mutation}
+#### ChangePaymentMethod mutation 
 
 
 ```
@@ -937,7 +939,7 @@ mutation ChangePaymentMethod($paymentMethodId: ID!) {
 
 
 
-#### ChangePaymentFields mutation {#changepaymentfields-mutation}
+#### ChangePaymentFields mutation
 
 
 ```
@@ -958,8 +960,7 @@ mutation ChangePaymentFields($fields: [payment_fields_input]!) {
 
 
 
-#### ChangeCustomerNotes mutation {#changecustomernotes-mutation}
-
+#### ChangeCustomerNotes mutation
 
 ```
 mutation ChangeShippingMethod($notes: String!) {
@@ -972,7 +973,7 @@ mutation ChangeShippingMethod($notes: String!) {
 
 
 
-### Coupons feature (requires “Coupons” add-on) {#coupons-feature-requires-“coupons”-add-on}
+### Coupons feature (requires "Coupons" add-on) 
 
 You can add coupons to the cart by using **addCartCoupon(code)** mutation and remove coupons by using **removeCartCoupon(code)**  mutation. If coupon is valid, it will be applied to the cart and the cart **total** value will be changed. 
 

@@ -777,7 +777,7 @@
 <p>This demo store storefront can be accessed by the URL: <a href="https://mobile.x-cart.com/">https://mobile.x-cart.com.</a></p>
 <p>The API can be easily integrated via such solutions like the whole universe of different Apollo Clients (<a href="https://www.apollographql.com/">https://www.apollographql.com/</a>).</p>
 <h2>
-<a id="authentication-authentication" class="anchor" href="#authentication-authentication" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authentication {#authentication}</h2>
+<a id="authentication" class="anchor" href="#authentication" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authentication</h2>
 <p>Request authentication is JWT-based. Most of the query objects can be accessed without any token - replicating how the website storefront can be accessed. User-related data, such as customer orders information, address and personal can only be accessed by providing the user JWT token.</p>
 <p>Do not provide any token if you’re not sure if it’s the valid one. If invalid token is presented, the API won’t allow access to any information, even if it doesn’t require a token.</p>
 <p>Any requests to protected areas should include a special GraphQL variable called <code>context</code>.</p>
@@ -788,7 +788,7 @@
 <li>lng: Language 2-char code</li>
 </ul>
 <h3>
-<a id="receiving-token-for-registered-user-receiving-token-for-registered-user" class="anchor" href="#receiving-token-for-registered-user-receiving-token-for-registered-user" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Receiving token for registered user {#receiving-token-for-registered-user}</h3>
+<a id="receiving-token-for-registered-user" class="anchor" href="#receiving-token-for-registered-user" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Receiving token for registered user</h3>
 <p>The JWT can be received via the following mutation:</p>
 <pre><code>mutation Auth($auth: AuthInput!) {
   auth(auth: $auth)
@@ -815,8 +815,8 @@
 }
 </code></pre>
 <h3>
-<a id="receiving-token-for-anonymous-user-receiving-token-for-anonymous-user" class="anchor" href="#receiving-token-for-anonymous-user-receiving-token-for-anonymous-user" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Receiving token for anonymous user {#receiving-token-for-anonymous-user}</h3>
-<p>By default, no persistent data is being stored by the backend during API access, therefore there are no tokens and cart ids. However, right after a successful mutation that changes the cart to be non-empty (e.g. after adding the product to cart), the <strong><code>cart</code></strong> object will have a <strong><code>token</code></strong> param which can be used to continue making requests with a single session. Temporary anonymous user will be created on the backend.</p>
+<a id="receiving-token-for-anonymous-user" class="anchor" href="#receiving-token-for-anonymous-user" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Receiving token for anonymous user</h3>
+<p>By default, no persistent data is being stored by the backend during API access, therefore there are no tokens and cart ids. However, right after a successful mutation that changes the cart to be non-empty (e.g. after adding the product to cart), the <code>cart</code> object will have a <code>token</code> param which can be used to continue making requests with a single session. Temporary anonymous user will be created on the backend.</p>
 <p>For instance, you can receive a jwt after making such mutation:</p>
 <pre><code>mutation {
     addProductToCart(product_id: 7) {
@@ -838,8 +838,8 @@
 }
 </code></pre>
 <h3>
-<a id="token-usage-token-usage" class="anchor" href="#token-usage-token-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Token usage {#token-usage}</h3>
-<p>You can use received jwt string in order to get access to any protected user information simply by including <strong><code>context</code></strong> variable in all requests:</p>
+<a id="token-usage" class="anchor" href="#token-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Token usage</h3>
+<p>You can use received jwt string in order to get access to any protected user information simply by including <code>context</code> variable in all requests:</p>
 <pre><code>{
   "context": {
     "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjo1ODYsImFjY2VzcyI6ImN1c3RvbWVyIiwiZXhwaXJlIjoiMjAxOS0wNi0xOFQxNTo0NDoxMyswNDowMCJ9.DrGeyReowpizC8UKQRuIK34-CtHXxglkPVOVfyn1FHft0udXKPYqIQJgPJ15jBylYvmcWa13JolICXTkJpuPuQ"
@@ -880,7 +880,7 @@
 </code></pre>
 <p>The API access isn’t protected with external application identifiers check - but this can be improved with some custom modification.</p>
 <h2>
-<a id="module-related-queries-module-related-queries" class="anchor" href="#module-related-queries-module-related-queries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Module-related queries {#module-related-queries}</h2>
+<a id="module-related-queries" class="anchor" href="#module-related-queries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Module-related queries</h2>
 <p>Some queries in this GraphQL API are being exclusively resolved by various X-Cart addons, e.g. My Wishlist addon, Put an Offer addon. In case when required module is not enabled in the system, the API will return the similar response:</p>
 <pre><code>{
   "data": {
@@ -915,10 +915,10 @@
 </code></pre>
 <p>When the certain addon name (e.g. QSL-MyWishlist) is either non-present in the list or marked as disabled, you can safely disable the corresponding features in your app.</p>
 <h2>
-<a id="examples-examples" class="anchor" href="#examples-examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples {#examples}</h2>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h2>
 <p>Here are the few examples of making GraphQL queries:</p>
 <h3>
-<a id="getting-the-collection-of-products-filtered-by-some-criteria-getting-the-collection-of-products-filtered-by-some-criteria" class="anchor" href="#getting-the-collection-of-products-filtered-by-some-criteria-getting-the-collection-of-products-filtered-by-some-criteria" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting the collection of products filtered by some criteria {#getting-the-collection-of-products-filtered-by-some-criteria}</h3>
+<a id="getting-the-collection-of-products-filtered-by-some-criteria" class="anchor" href="#getting-the-collection-of-products-filtered-by-some-criteria" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting the collection of products filtered by some criteria</h3>
 <pre><code>query ($filters: products_filter_input) {
   collection(from: 0, size: 100, type: products, filters: $filters) {
     count
@@ -941,7 +941,7 @@
 }
 </code></pre>
 <h3>
-<a id="searching-for-products-searching-for-products" class="anchor" href="#searching-for-products-searching-for-products" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Searching for products {#searching-for-products}</h3>
+<a id="searching-for-products" class="anchor" href="#searching-for-products" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Searching for products</h3>
 <p>Use the <a href="#getting-the-collection-of-products-filtered-by-some-criteria">Getting the collection of products</a> request with the following filters:</p>
 <p>With the variables:</p>
 <pre><code>{
@@ -951,7 +951,7 @@
 }
 </code></pre>
 <h3>
-<a id="getting-user-data-requires-auth-getting-user-data-requires-auth" class="anchor" href="#getting-user-data-requires-auth-getting-user-data-requires-auth" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting user data (requires auth) {#getting-user-data-requires-auth}</h3>
+<a id="getting-user-data-requires-auth" class="anchor" href="#getting-user-data-requires-auth" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting user data (requires auth)</h3>
 <pre><code>query {
   user {
     login
@@ -973,9 +973,9 @@
   }
 }
 </code></pre>
-<p>The *_url fields return a special URL leading to a stripped-down mobile-ready version of the page (suitable for WebView).</p>
+<p>The <code>*_url</code> fields return a special URL leading to a stripped-down mobile-ready version of the page (suitable for WebView).</p>
 <h3>
-<a id="getting-language-information-getting-language-information" class="anchor" href="#getting-language-information-getting-language-information" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting language information {#getting-language-information}</h3>
+<a id="getting-language-information" class="anchor" href="#getting-language-information" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting language information</h3>
 <pre><code>query {
   appConfig {
     default_language {
@@ -989,7 +989,7 @@
 }
 </code></pre>
 <h3>
-<a id="getting-product-collections-metadata-getting-product-collections-metadata" class="anchor" href="#getting-product-collections-metadata-getting-product-collections-metadata" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting product collections metadata {#getting-product-collections-metadata}</h3>
+<a id="getting-product-collections-metadata" class="anchor" href="#getting-product-collections-metadata" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting product collections metadata</h3>
 <pre><code>query {
   appData {
     home_page_widgets {
@@ -1006,7 +1006,7 @@
 </code></pre>
 <p>The path <code>appData.home_page_widgets.params.filters</code> contains JSON-encoded string of <code>"filters"</code>to use in query variables in order to obtain certain collection.</p>
 <h3>
-<a id="getting-wishlist-data-requires-auth-getting-wishlist-data-requires-auth" class="anchor" href="#getting-wishlist-data-requires-auth-getting-wishlist-data-requires-auth" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting wishlist data (requires auth) {#getting-wishlist-data-requires-auth}</h3>
+<a id="getting-wishlist-data-requires-auth" class="anchor" href="#getting-wishlist-data-requires-auth" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting wishlist data (requires auth)</h3>
 <pre><code>{
   wishlist {
     id
@@ -1020,7 +1020,7 @@
 }
 </code></pre>
 <h3>
-<a id="register-new-user-register-new-user" class="anchor" href="#register-new-user-register-new-user" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Register new user {#register-new-user}</h3>
+<a id="register-new-user" class="anchor" href="#register-new-user" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Register new user</h3>
 <pre><code>mutation($data: UserRegisterInput!) {
   register(data: $data) {
     jwt
@@ -1046,7 +1046,7 @@
 }
 </code></pre>
 <h3>
-<a id="read-user-address-book-auth-protected-read-user-address-book-auth-protected" class="anchor" href="#read-user-address-book-auth-protected-read-user-address-book-auth-protected" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Read user address book (auth protected) {#read-user-address-book-auth-protected}</h3>
+<a id="read-user-address-book-auth-protected" class="anchor" href="#read-user-address-book-auth-protected" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Read user address book (auth protected)</h3>
 <pre><code>{
     user {
         id
@@ -1102,7 +1102,7 @@ Result:</p>
 }
 </code></pre>
 <h3>
-<a id="update-address-in-address-book-auth-protected-update-address-in-address-book-auth-protected" class="anchor" href="#update-address-in-address-book-auth-protected-update-address-in-address-book-auth-protected" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Update address in address book (auth protected) {#update-address-in-address-book-auth-protected}</h3>
+<a id="update-address-in-address-book-auth-protected" class="anchor" href="#update-address-in-address-book-auth-protected" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Update address in address book (auth protected)</h3>
 <pre><code>mutation($address: address_input!) {
   changeUserAddress(address_id: 7, address: $address) {
       address_list {
@@ -1120,7 +1120,7 @@ Result:</p>
 }
 </code></pre>
 <h3>
-<a id="delete-address-from-address-book-auth-protected-delete-address-from-address-book-auth-protected" class="anchor" href="#delete-address-from-address-book-auth-protected-delete-address-from-address-book-auth-protected" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Delete address from address book (auth protected) {#delete-address-from-address-book-auth-protected}</h3>
+<a id="delete-address-from-address-book-auth-protected" class="anchor" href="#delete-address-from-address-book-auth-protected" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Delete address from address book (auth protected)</h3>
 <pre><code>mutation {
   deleteUserAddress(address_id: 7) {
       address_list {
@@ -1130,7 +1130,7 @@ Result:</p>
 }
 </code></pre>
 <h2>
-<a id="checkout-flow-checkout-flow" class="anchor" href="#checkout-flow-checkout-flow" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Checkout flow {#checkout-flow}</h2>
+<a id="checkout-flow" class="anchor" href="#checkout-flow" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Checkout flow</h2>
 <p>The API can be used to place orders on the store and provide a customer with an ability to perform the payment on the selected payment processor page. Due to complexity, it has to be implemented in a certain way. The general flow is based on the UI, split by 3 major steps:</p>
 <ul>
 <li>Specifying shipping\billing addresses,</li>
@@ -1187,7 +1187,7 @@ Result:</p>
 <p><br>
 This data will allow you to render a proper final screen with order details.</p>
 <h3>
-<a id="payment-method-options-payment-method-options" class="anchor" href="#payment-method-options-payment-method-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Payment method options {#payment-method-options}</h3>
+<a id="payment-method-options" class="anchor" href="#payment-method-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Payment method options</h3>
 <p>You can retrieve available payment options from <strong>payment_methods</strong> prop of the <strong>cart</strong> object:</p>
 <pre><code>  cart {
     id
@@ -1276,9 +1276,9 @@ This data will allow you to render a proper final screen with order details.</p>
 }
 </code></pre>
 <h3>
-<a id="checkout-related-queries--mutations-checkout-related-queries--mutations" class="anchor" href="#checkout-related-queries--mutations-checkout-related-queries--mutations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Checkout-related Queries &amp; Mutations {#checkout-related-queries-&amp;-mutations}</h3>
+<a id="checkout-related-queries--mutations" class="anchor" href="#checkout-related-queries--mutations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Checkout-related Queries &amp; Mutations</h3>
 <h4>
-<a id="checkoutshippingpagequery-checkoutshippingpagequery" class="anchor" href="#checkoutshippingpagequery-checkoutshippingpagequery" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CheckoutShippingPageQuery {#checkoutshippingpagequery}</h4>
+<a id="checkoutshippingpagequery" class="anchor" href="#checkoutshippingpagequery" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CheckoutShippingPageQuery</h4>
 <pre><code>query CheckoutShippingPageQuery {
   cart {
     id
@@ -1343,7 +1343,7 @@ This data will allow you to render a proper final screen with order details.</p>
 }
 </code></pre>
 <h4>
-<a id="changeshippingmethod-mutation-changeshippingmethod-mutation" class="anchor" href="#changeshippingmethod-mutation-changeshippingmethod-mutation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ChangeShippingMethod mutation {#changeshippingmethod-mutation}</h4>
+<a id="changeshippingmethod-mutation" class="anchor" href="#changeshippingmethod-mutation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ChangeShippingMethod mutation</h4>
 <pre><code>mutation ChangeShippingMethod($shippingMethodId: ID!) {
    changeShippingMethod (shipping_id: $shippingMethodId) {
      id
@@ -1363,7 +1363,7 @@ This data will allow you to render a proper final screen with order details.</p>
  }
 </code></pre>
 <h4>
-<a id="changeshippingaddress-mutation-might-change-both-addresses-changeshippingaddress-mutation-might-change-both-addresses" class="anchor" href="#changeshippingaddress-mutation-might-change-both-addresses-changeshippingaddress-mutation-might-change-both-addresses" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ChangeShippingAddress mutation (might change both addresses) {#changeshippingaddress-mutation-might-change-both-addresses}</h4>
+<a id="changeshippingaddress-mutation-might-change-both-addresses" class="anchor" href="#changeshippingaddress-mutation-might-change-both-addresses" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ChangeShippingAddress mutation (might change both addresses)</h4>
 <pre><code>mutation ChangeShippingAddress($address: address_input!) {
    changeAddress (type: "shipping", address: $address) {
      id
@@ -1435,7 +1435,7 @@ This data will allow you to render a proper final screen with order details.</p>
   },
 </code></pre>
 <h4>
-<a id="checkoutpaymentpagequery-checkoutpaymentpagequery" class="anchor" href="#checkoutpaymentpagequery-checkoutpaymentpagequery" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CheckoutPaymentPageQuery {#checkoutpaymentpagequery}</h4>
+<a id="checkoutpaymentpagequery" class="anchor" href="#checkoutpaymentpagequery" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CheckoutPaymentPageQuery</h4>
 <pre><code>query CheckoutPaymentPageQuery {
  cart {
    id
@@ -1466,7 +1466,7 @@ This data will allow you to render a proper final screen with order details.</p>
 }
 </code></pre>
 <h4>
-<a id="changepaymentmethod-mutation-changepaymentmethod-mutation" class="anchor" href="#changepaymentmethod-mutation-changepaymentmethod-mutation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ChangePaymentMethod mutation {#changepaymentmethod-mutation}</h4>
+<a id="changepaymentmethod-mutation" class="anchor" href="#changepaymentmethod-mutation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ChangePaymentMethod mutation</h4>
 <pre><code>mutation ChangePaymentMethod($paymentMethodId: ID!) {
    changePaymentMethod (payment_id: $paymentMethodId) {
      id
@@ -1482,7 +1482,7 @@ This data will allow you to render a proper final screen with order details.</p>
  }
 </code></pre>
 <h4>
-<a id="changepaymentfields-mutation-changepaymentfields-mutation" class="anchor" href="#changepaymentfields-mutation-changepaymentfields-mutation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ChangePaymentFields mutation {#changepaymentfields-mutation}</h4>
+<a id="changepaymentfields-mutation" class="anchor" href="#changepaymentfields-mutation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ChangePaymentFields mutation</h4>
 <pre><code>mutation ChangePaymentFields($fields: [payment_fields_input]!) {
    changePaymentFields (fields: $fields) {
      id
@@ -1498,7 +1498,7 @@ This data will allow you to render a proper final screen with order details.</p>
  }
 </code></pre>
 <h4>
-<a id="changecustomernotes-mutation-changecustomernotes-mutation" class="anchor" href="#changecustomernotes-mutation-changecustomernotes-mutation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ChangeCustomerNotes mutation {#changecustomernotes-mutation}</h4>
+<a id="changecustomernotes-mutation" class="anchor" href="#changecustomernotes-mutation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ChangeCustomerNotes mutation</h4>
 <pre><code>mutation ChangeShippingMethod($notes: String!) {
    changeCustomerNotes (notes: $notes) {
      id
@@ -1507,7 +1507,7 @@ This data will allow you to render a proper final screen with order details.</p>
  }
 </code></pre>
 <h3>
-<a id="coupons-feature-requires-coupons-add-on-coupons-feature-requires-coupons-add-on" class="anchor" href="#coupons-feature-requires-coupons-add-on-coupons-feature-requires-coupons-add-on" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Coupons feature (requires “Coupons” add-on) {#coupons-feature-requires-“coupons”-add-on}</h3>
+<a id="coupons-feature-requires-coupons-add-on" class="anchor" href="#coupons-feature-requires-coupons-add-on" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Coupons feature (requires "Coupons" add-on)</h3>
 <p>You can add coupons to the cart by using <strong>addCartCoupon(code)</strong> mutation and remove coupons by using <strong>removeCartCoupon(code)</strong>  mutation. If coupon is valid, it will be applied to the cart and the cart <strong>total</strong> value will be changed.</p>
 <p>The <strong>coupons</strong>property of the cart will contain currently applied coupons.</p>
 <p>Also, there is a list of error messages in case coupon code is invalid or cannot be applied for a reason (the message is translated according to the current language):</p>
