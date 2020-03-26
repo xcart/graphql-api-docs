@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="value_range_input GraphQL documentation">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>value_range_input</title>
+    <link rel="stylesheet" href="/assets/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.2/anchor.min.js"></script>
+    <script>
+
+    // Add anchors on DOMContentLoaded
+    document.addEventListener("DOMContentLoaded", function(event) {
+      anchors.options = {
+        placement: 'left',
+        visible: 'hover',
+        icon: '¶'
+      };
+      anchors.add('h2, h3, h4, h5, h6, .anchored');
+    });
+
+    </script>
+  </head>
+  <body>
+
+    <div id="wrap">
+      <div id="header">
+      </div>
+      <div id="sidebar">
+        <ul class="categories">
+  <li>
+    <ul class="menu-root">
+      <li>
+        <a href="/">GraphQL Reference</a>
+    </ul>
+  </li>
+
+  <li>
+    <p>Queries</p>
+    <ul class="menu-root">
+      <li>
+        <a href="/operation/query/" class="sidebar-link">
+          Query
+        </a>
+      </li>
+      <li>
+        <a href="/operation/mutation/" class="sidebar-link">
+          Mutation
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <li>
+    <p><a href="/object">Objects</a></p>
+    <ul class="menu-root">
+      
+        
+      <li>
+        <a href="/object/__directive/" class="sidebar-link">
+          __Directive
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/__enumvalue/" class="sidebar-link">
+          __EnumValue
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/__field/" class="sidebar-link">
+          __Field
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/__inputvalue/" class="sidebar-link">
+          __InputValue
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/__schema/" class="sidebar-link">
+          __Schema
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/__type/" class="sidebar-link">
+          __Type
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/address/" class="sidebar-link">
+          address
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/app_config/" class="sidebar-link">
+          app_config
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/app_data/" class="sidebar-link">
+          app_data
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/banner/" class="sidebar-link">
+          banner
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/cart/" class="sidebar-link">
+          cart
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/category/" class="sidebar-link">
+          category
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/collection/" class="sidebar-link">
+          collection
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/country/" class="sidebar-link">
+          country
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/coupon/" class="sidebar-link">
+          coupon
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/currency/" class="sidebar-link">
+          currency
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/faq/" class="sidebar-link">
+          faq
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/homepagewidget/" class="sidebar-link">
+          homePageWidget
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/language/" class="sidebar-link">
+          language
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/membership/" class="sidebar-link">
+          membership
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/module/" class="sidebar-link">
+          module
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/offer/" class="sidebar-link">
+          offer
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/orderitem/" class="sidebar-link">
+          orderItem
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/order_item_options/" class="sidebar-link">
+          order_item_options
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/payment/" class="sidebar-link">
+          payment
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/payment_field/" class="sidebar-link">
+          payment_field
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/product/" class="sidebar-link">
+          product
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/product_attribute/" class="sidebar-link">
+          product_attribute
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/product_attribute_group/" class="sidebar-link">
+          product_attribute_group
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/product_option/" class="sidebar-link">
+          product_option
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/product_option_value/" class="sidebar-link">
+          product_option_value
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/product_sticker/" class="sidebar-link">
+          product_sticker
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/profile_field/" class="sidebar-link">
+          profile_field
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/registrationresult/" class="sidebar-link">
+          registrationResult
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/select_field/" class="sidebar-link">
+          select_field
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/select_field_value/" class="sidebar-link">
+          select_field_value
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/shipping/" class="sidebar-link">
+          shipping
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/state/" class="sidebar-link">
+          state
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/switch_field/" class="sidebar-link">
+          switch_field
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/text_field/" class="sidebar-link">
+          text_field
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/user/" class="sidebar-link">
+          user
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/value_range_field/" class="sidebar-link">
+          value_range_field
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/widgetparams/" class="sidebar-link">
+          widgetParams
+        </a>
+      </li>
+      
+        
+      <li>
+        <a href="/object/wishlist/" class="sidebar-link">
+          wishlist
+        </a>
+      </li>
+      
+    </ul>
+  </li>
+
+  <li>
+    <p><a href="/operation/mutation">Mutations</a></p>
+    <ul class="menu-root">
+      
+      
+      <li>
+        <a href="/mutation/addcartcoupon/" class="sidebar-link">
+          addCartCoupon
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/addproducttocart/" class="sidebar-link">
+          addProductToCart
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/addproducttowishlist/" class="sidebar-link">
+          addProductToWishlist
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/auth/" class="sidebar-link">
+          auth
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/changeaddress/" class="sidebar-link">
+          changeAddress
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/changecustomernotes/" class="sidebar-link">
+          changeCustomerNotes
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/changeitemamount/" class="sidebar-link">
+          changeItemAmount
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/changeitemamountbymodifier/" class="sidebar-link">
+          changeItemAmountByModifier
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/changepaymentfields/" class="sidebar-link">
+          changePaymentFields
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/changepaymentmethod/" class="sidebar-link">
+          changePaymentMethod
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/changeshippingmethod/" class="sidebar-link">
+          changeShippingMethod
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/changeuseraddress/" class="sidebar-link">
+          changeUserAddress
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/contactus/" class="sidebar-link">
+          contactUs
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/deleteuseraddress/" class="sidebar-link">
+          deleteUserAddress
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/putoffer/" class="sidebar-link">
+          putOffer
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/recoverpassword/" class="sidebar-link">
+          recoverPassword
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/register/" class="sidebar-link">
+          register
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/removecartcoupon/" class="sidebar-link">
+          removeCartCoupon
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/removecartitem/" class="sidebar-link">
+          removeCartItem
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/removeproductfromwishlist/" class="sidebar-link">
+          removeProductFromWishlist
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/selectaddress/" class="sidebar-link">
+          selectAddress
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/signupfornews/" class="sidebar-link">
+          signUpForNews
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/mutation/updateuserregisterdata/" class="sidebar-link">
+          updateUserRegisterData
+        </a>
+      </li>
+      
+    </ul>
+  </li>
+
+  <li>
+    <p><a href="/interface">Interfaces</a></p>
+    <ul class="menu-root">
+      
+        
+        <li>
+          <a href="/interface/collection_item/" class="sidebar-link">
+            collection_item
+          </a>
+        </li>
+      
+    </ul>
+  </li>
+
+  <li>
+    <p><a href="/enum">Enums</a></p>
+    <ul class="menu-root">
+      
+      
+      <li>
+        <a href="/enum/__directivelocation/" class="sidebar-link">
+          __DirectiveLocation
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/enum/__typekind/" class="sidebar-link">
+          __TypeKind
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/enum/address_type_enum/" class="sidebar-link">
+          address_type_enum
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/enum/cart_error/" class="sidebar-link">
+          cart_error
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/enum/collection_type/" class="sidebar-link">
+          collection_type
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/enum/form_field_type/" class="sidebar-link">
+          form_field_type
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/enum/user_type/" class="sidebar-link">
+          user_type
+        </a>
+      </li>
+      
+    </ul>
+  </li>
+
+  <li>
+    <p><a href="/union">Unions</a></p>
+    <ul class="menu-root">
+      
+      
+      <li>
+        <a href="/union/category_products_filter/" class="sidebar-link">
+          category_products_filter
+        </a>
+      </li>
+      
+    </ul>
+  </li>
+
+  <li>
+    <p><a href="/input_object">Input Objects</a></p>
+    <ul class="menu-root">
+      
+      
+      <li>
+        <a href="/input_object/authinput/" class="sidebar-link">
+          AuthInput
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/input_object/clientinput/" class="sidebar-link">
+          ClientInput
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/input_object/userregisterinput/" class="sidebar-link">
+          UserRegisterInput
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/input_object/userupdateinput/" class="sidebar-link">
+          UserUpdateInput
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/input_object/address_input/" class="sidebar-link">
+          address_input
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/input_object/list_order_filter/" class="sidebar-link">
+          list_order_filter
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/input_object/payment_fields_input/" class="sidebar-link">
+          payment_fields_input
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/input_object/products_filter_input/" class="sidebar-link">
+          products_filter_input
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/input_object/value_range_input/" class="sidebar-link">
+          value_range_input
+        </a>
+      </li>
+      
+    </ul>
+  </li>
+
+  <li>
+    <p><a href="/scalar">Scalars</a></p>
+    <ul class="menu-root">
+      
+      
+      <li>
+        <a href="/scalar/boolean/" class="sidebar-link">
+          Boolean
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/scalar/float/" class="sidebar-link">
+          Float
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/scalar/id/" class="sidebar-link">
+          ID
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/scalar/int/" class="sidebar-link">
+          Int
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/scalar/string/" class="sidebar-link">
+          String
+        </a>
+      </li>
+      
+    </ul>
+  </li>
+
+  <li>
+    <p><a href="/directive">Directives</a></p>
+    <ul class="menu-root">
+      
+      
+      <li>
+        <a href="/directive/deprecated/" class="sidebar-link">
+          deprecated
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/directive/include/" class="sidebar-link">
+          include
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="/directive/skip/" class="sidebar-link">
+          skip
+        </a>
+      </li>
+      
+    </ul>
+  </li>
+</ul>
+
+      </div>
+      <div id="content">
+
+        <h1>
+<a id="value_range_input" class="anchor" href="#value_range_input" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>value_range_input</h1>
+<h2>
+<a id="input-fields" class="anchor" href="#input-fields" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Input Fields</h2>
+<div class="field-entry ">
+  <span id="from" class="field-name anchored">from (<code><a href="/scalar/float">Float</a></code>)</span>
+  <div class="description-wrapper">
+   <p>From value</p>
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="to" class="field-name anchored">to (<code><a href="/scalar/float">Float</a></code>)</span>
+  <div class="description-wrapper">
+   <p>To value</p>
+  </div>
+</div>
+
+      </div>
+
+      <!-- mobile only -->
+      <div id="mobile-header">
+        <a class="menu-button"></a>
+        <a class="logo" href="/">
+
+        </a>
+      </div>
+      <div id="mobile-shade"></div>
+
+    </div>
+
+  </body>
+</html>
