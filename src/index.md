@@ -4,9 +4,10 @@ title: "X-Cart GraphQL API Provider"
 
 # GraphQL API Connector Documentation
 
-
-[TOC]
-
+- [Authentication](#authentication)
+- [Module-related queries](#module-related-queries)
+- [Examples](#examples)
+- [Checkout flow](#checkout-flow)
 
 X-Cart 5 can be enhanced with the following add-ons to provide GraphQL compatible catalog API, suitable for making alternative frontend apps (e.g. mobile apps):
 
