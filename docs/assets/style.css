@@ -1114,3 +1114,12 @@ pre {
   background: #fdf2ec; }
   .deprecation-notice span {
     font-weight: bold; }
+
+#content .field-entry {
+    margin-bottom: 1rem !important;
+} 
+
+#content .deprecation-notice {
+    margin-top: .5rem !important;
+    margin-bottom: .5rem !important;
+}
