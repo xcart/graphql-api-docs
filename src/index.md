@@ -545,9 +545,7 @@ The API is ready to place order once **cart** object has its **checkout_ready** 
 *   NO_SHIPPING_AVAILABLE
 *   NO_SHIPPING_ADDRESS
 
-Communication protocol is usually the following:
-
-
+Cart preparation steps are usually the following:
 
 1. Retrieve latest cart state by using [CheckoutShippingPageQuery](#checkoutshippingpagequery)
 2. Specify the address with [ChangeShippingAddress](#changeshippingaddress-mutation-might-change-both-addresses) mutation (this might also change billing address & shipping methods, so we refetch this data too)
@@ -559,41 +557,95 @@ Communication protocol is usually the following:
 6. Set payment options (if required) with [ChangePaymentFields](#changepaymentfields-mutation) mutation
 7. (OPTIONAL) Set customer notes with [ChangeCustomerNotes](#changecustomernotes-mutation) mutation
 
-Once these steps are done and the cart is in `checkout_ready = true` state, you should render a WebView by the **checkout_url** URL with the following injected JS patch:
+Once these steps are done and the cart is in `checkout_ready = true` state, you are ready to allow customer to place an order. The payment process is performed inside WebView to allow for various payment providers. The implementation differs for iOS and Android systems.
 
+### iOS WebView implementation
 
-```
-(function() {
-     var originalPostMessage = window.postMessage;
+Use **WKWebView** to open URL stored in `checkout_url` param of the `cart` object. The WebView **must** follow redirects and respond to user clicks. The payment screen will either continue to the success page or proceed to the payment processor. 
 
-     var patchedPostMessage = function(message, targetOrigin, transfer) {
-       originalPostMessage(message, targetOrigin, transfer);
-     };
+In order to return back to the app in case order is placed or errors happened, you should implement Script Messages handler by the name of `status` and react accordingly. Look at [Status message structure](#status-message-structure) section for details
 
-     patchedPostMessage.toString = function() {
-       return String(Object.hasOwnProperty).replace('hasOwnProperty', 'postMessage');
-     };
-
-     window.postMessage = patchedPostMessage;
-   })();
-```
-
-
-The aforementioned WebView should handle onMessage, receiving the order stats in the **responseData** object:
-
+Very approximate Swift UIViewController implementation might look like this:
 
 ```
-{
-  "message": ...,
-  "order":{},
-  "success": ...
+import UIKit
+import WebKit
+
+class MyViewController : UIViewController, WKScriptMessageHandler {
+
+    var userContentController: WKUserContentController?
+    
+    override func loadView() {
+        let url = URL(string: "https://<domain>/admin.php?target=graphql_api_checkout...");
+        let config = WKWebViewConfiguration()
+        self.userContentController = WKUserContentController()
+        config.userContentController = self.userContentController!
+        
+        let webview = WKWebView(frame: UIView().frame, configuration: config);
+        if let unwrapped = url {
+            let request = URLRequest(url: unwrapped);
+            webview.load(request);
+        }
+        self.view = webview
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.userContentController!.add(self, name: "status")
+    }
+    
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+
+        if message.name == "status", let messageBody = message.body as? [String: Any] {
+            // React somehow on the status
+            print(messageBody["last_order_number"]!)
+            print(messageBody["messages"]!)
+        }
+    }
 }
 ```
 
+### Android implementation
 
- \
-This data will allow you to render a proper final screen with order details.
+For Android app you should use `addJavascriptInteface` feature of the WebView. Look at the guide to implement it: [addJavascriptInterface()](https://developer.android.com/reference/android/webkit/WebView.html#addJavascriptInterface(java.lang.Object,%20java.lang.String)).
 
+GraphQL Api requires you to inject a handler by the name of `statusMessageHandler` with the following interface:
+
+```
+class StatusMessageHandler {
+  @JavascriptInterface
+  public void postMessage(String message) { 
+    try {
+      JSONObject data = new JSONObject(message);
+      // react accordingly to message structure
+    } catch (Exception ex) {}
+  }
+}
+
+webview.getSettings().setJavaScriptEnabled(true);
+webView.addJavascriptInterface(new StatusMessageHandler(), "statusMessageHandler");
+```
+
+### Status message structure and handling
+
+Message is a JSON-like object of the following structure:
+
+```
+{
+  "last_order_number": "#00001", // string
+  "status": "success", // string
+  "messages": [
+    ["type": "error", 
+     "text": "Some text...", 
+     "prefix": "Error"]
+  ]
+}
+```
+
+If `status` property is `success`, this means you should stop the WebView and show the customer final screen with order confirmation and number from `last_order_number` property. If `status` is `errors`, you should stop the WebView and return him on the checkout screen, and display errors from the `messages` array in popup fashion. In other cases `status` property will be an empty string.
+
+Notice that you won't have access to the same `cart` object after order is placed.
 
 ### Payment method options 
 

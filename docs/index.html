@@ -1158,7 +1158,7 @@ Result:</p>
 <li>NO_SHIPPING_AVAILABLE</li>
 <li>NO_SHIPPING_ADDRESS</li>
 </ul>
-<p>Communication protocol is usually the following:</p>
+<p>Cart preparation steps are usually the following:</p>
 <ol>
 <li>Retrieve latest cart state by using <a href="#checkoutshippingpagequery">CheckoutShippingPageQuery</a>
 </li>
@@ -1175,30 +1175,81 @@ Result:</p>
 <li>Set payment options (if required) with <a href="#changepaymentfields-mutation">ChangePaymentFields</a> mutation</li>
 <li>(OPTIONAL) Set customer notes with <a href="#changecustomernotes-mutation">ChangeCustomerNotes</a> mutation</li>
 </ol>
-<p>Once these steps are done and the cart is in <code>checkout_ready = true</code> state, you should render a WebView by the <strong>checkout_url</strong> URL with the following injected JS patch:</p>
-<pre><code>(function() {
-     var originalPostMessage = window.postMessage;
+<p>Once these steps are done and the cart is in <code>checkout_ready = true</code> state, you are ready to allow customer to place an order. The payment process is performed inside WebView to allow for various payment providers. The implementation differs for iOS and Android systems.</p>
+<h3>
+<a id="ios-webview-implementation" class="anchor" href="#ios-webview-implementation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>iOS WebView implementation</h3>
+<p>Use <strong>WKWebView</strong> to open URL stored in <code>checkout_url</code> param of the <code>cart</code> object. The WebView <strong>must</strong> follow redirects and respond to user clicks. The payment screen will either continue to the success page or proceed to the payment processor.</p>
+<p>In order to return back to the app in case order is placed or errors happened, you should implement Script Messages handler by the name of <code>status</code> and react accordingly. Look at <a href="#status-message-structure">Status message structure</a> section for details</p>
+<p>Very approximate Swift UIViewController implementation might look like this:</p>
+<pre><code>import UIKit
+import WebKit
 
-     var patchedPostMessage = function(message, targetOrigin, transfer) {
-       originalPostMessage(message, targetOrigin, transfer);
-     };
+class MyViewController : UIViewController, WKScriptMessageHandler {
 
-     patchedPostMessage.toString = function() {
-       return String(Object.hasOwnProperty).replace('hasOwnProperty', 'postMessage');
-     };
+    var userContentController: WKUserContentController?
+    
+    override func loadView() {
+        let url = URL(string: "https://&lt;domain&gt;/admin.php?target=graphql_api_checkout...");
+        let config = WKWebViewConfiguration()
+        self.userContentController = WKUserContentController()
+        config.userContentController = self.userContentController!
+        
+        let webview = WKWebView(frame: UIView().frame, configuration: config);
+        if let unwrapped = url {
+            let request = URLRequest(url: unwrapped);
+            webview.load(request);
+        }
+        self.view = webview
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.userContentController!.add(self, name: "status")
+    }
+    
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
 
-     window.postMessage = patchedPostMessage;
-   })();
-</code></pre>
-<p>The aforementioned WebView should handle onMessage, receiving the order stats in the <strong>responseData</strong> object:</p>
-<pre><code>{
-  "message": ...,
-  "order":{},
-  "success": ...
+        if message.name == "status", let messageBody = message.body as? [String: Any] {
+            // React somehow on the status
+            print(messageBody["last_order_number"]!)
+            print(messageBody["messages"]!)
+        }
+    }
 }
 </code></pre>
-<p><br>
-This data will allow you to render a proper final screen with order details.</p>
+<h3>
+<a id="android-implementation" class="anchor" href="#android-implementation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Android implementation</h3>
+<p>For Android app you should use <code>addJavascriptInteface</code> feature of the WebView. Look at the guide to implement it: <a href="https://developer.android.com/reference/android/webkit/WebView.html#addJavascriptInterface(java.lang.Object,%20java.lang.String)">addJavascriptInterface()</a>.</p>
+<p>GraphQL Api requires you to inject a handler by the name of <code>statusMessageHandler</code> with the following interface:</p>
+<pre><code>class StatusMessageHandler {
+  @JavascriptInterface
+  public void postMessage(String message) { 
+    try {
+      JSONObject data = new JSONObject(message);
+      // react accordingly to message structure
+    } catch (Exception ex) {}
+  }
+}
+
+webview.getSettings().setJavaScriptEnabled(true);
+webView.addJavascriptInterface(new StatusMessageHandler(), "statusMessageHandler");
+</code></pre>
+<h3>
+<a id="status-message-structure-and-handling" class="anchor" href="#status-message-structure-and-handling" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Status message structure and handling</h3>
+<p>Message is a JSON-like object of the following structure:</p>
+<pre><code>{
+  "last_order_number": "#00001", // string
+  "status": "success", // string
+  "messages": [
+    ["type": "error", 
+     "text": "Some text...", 
+     "prefix": "Error"]
+  ]
+}
+</code></pre>
+<p>If <code>status</code> property is <code>success</code>, this means you should stop the WebView and show the customer final screen with order confirmation and number from <code>last_order_number</code> property. If <code>status</code> is <code>errors</code>, you should stop the WebView and return him on the checkout screen, and display errors from the <code>messages</code> array in popup fashion. In other cases <code>status</code> property will be an empty string.</p>
+<p>Notice that you won't have access to the same <code>cart</code> object after order is placed.</p>
 <h3>
 <a id="payment-method-options" class="anchor" href="#payment-method-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Payment method options</h3>
 <p>You can retrieve available payment options from <strong>payment_methods</strong> prop of the <strong>cart</strong> object:</p>
@@ -1378,7 +1429,7 @@ This data will allow you to render a proper final screen with order details.</p>
 <h4>
 <a id="changeshippingaddress-mutation-might-change-both-addresses" class="anchor" href="#changeshippingaddress-mutation-might-change-both-addresses" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ChangeShippingAddress mutation (might change both addresses)</h4>
 <pre><code>mutation ChangeShippingAddress($address: address_input!) {
-   changeAddress (type: "shipping", address: $address) {
+   changeAddress (type: "SHIPPING_TYPE", address: $address) {
      id
      total
      errors
