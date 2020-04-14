@@ -808,7 +808,7 @@ mutation ChangeShippingMethod($shippingMethodId: ID!) {
 
 ```
 mutation ChangeShippingAddress($address: address_input!) {
-   changeAddress (type: "shipping", address: $address) {
+   changeAddress (type: "SHIPPING_TYPE", address: $address) {
      id
      total
      errors
