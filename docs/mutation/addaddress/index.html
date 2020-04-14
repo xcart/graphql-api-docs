@@ -2,9 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="description" content="recoverPassword GraphQL documentation">
+    <meta name="description" content="addAddress GraphQL documentation">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>recoverPassword</title>
+    <title>addAddress</title>
     <link rel="stylesheet" href="/graphql-api-docs/assets/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.2/anchor.min.js"></script>
     <script>
@@ -770,40 +770,136 @@
       <div id="content">
 
         <h1>
-<a id="recoverpassword" class="anchor" href="#recoverpassword" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>recoverPassword</h1>
-<p>Recover password for provided login</p>
+<a id="addaddress" class="anchor" href="#addaddress" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>addAddress</h1>
+<p>Add address</p>
 <h2>
 <a id="input-fields" class="anchor" href="#input-fields" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Input fields</h2>
 <div class="field-entry ">
-  <span id="login" class="field-name anchored">login (<code><a href="/graphql-api-docs/scalar/string">String!</a></code>)</span>
+  <span id="type" class="field-name anchored">type (<code><a href="/graphql-api-docs/enum/address_type_enum">address_type_enum!</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="address" class="field-name anchored">address (<code><a href="/graphql-api-docs/input_object/address_input">address_input!</a></code>)</span>
   <div class="description-wrapper">
   </div>
 </div>
 <h2>
 <a id="return-fields" class="anchor" href="#return-fields" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Return fields</h2>
 <div class="field-entry ">
-  <span id="recoverpassword" class="field-name anchored">recoverPassword (<code><a href="/graphql-api-docs/scalar/boolean">Boolean</a></code>)</span>
+  <span id="id" class="field-name anchored">id (<code><a href="/graphql-api-docs/scalar/id">ID</a></code>)</span>
   <div class="description-wrapper">
-   <p>Recover password for provided login</p>
-     <table class="arguments">
-  <thead>
-  <tr>
-    <th>Argument</th>
-    <th>Type</th>
-    <th>Description</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-  <td><code class="anchored">login</code></td>
-  <td>
-    <code><a href="/graphql-api-docs/scalar/string">String!</a></code>
-  </td>
-  <td>
-   </td>
-  </tr>
-  </tbody>
-</table>
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="token" class="field-name anchored">token (<code><a href="/graphql-api-docs/scalar/string">String</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="cart_url" class="field-name anchored">cart_url (<code><a href="/graphql-api-docs/scalar/string">String</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="checkout_url" class="field-name anchored">checkout_url (<code><a href="/graphql-api-docs/scalar/string">String</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="webview_flow_url" class="field-name anchored">webview_flow_url (<code><a href="/graphql-api-docs/scalar/string">String</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="user" class="field-name anchored">user (<code><a href="/graphql-api-docs/object/user">user</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="address_list" class="field-name anchored">address_list (<code><a href="/graphql-api-docs/object/address">[address]</a></code>)</span>
+  <div class="description-wrapper">
+<div class="deprecation-notice ">
+  <span class="deprecation-title">Deprecation notice</span>
+  <p>Use cart.shipping_address and cart.billing_address instead separately. See user.address_list for more info.</p>
+</div>
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="shipping_address" class="field-name anchored">shipping_address (<code><a href="/graphql-api-docs/object/address">address</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="billing_address" class="field-name anchored">billing_address (<code><a href="/graphql-api-docs/object/address">address</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="items" class="field-name anchored">items (<code><a href="/graphql-api-docs/object/orderitem">[orderItem]</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="payment" class="field-name anchored">payment (<code><a href="/graphql-api-docs/object/payment">payment</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="shipping" class="field-name anchored">shipping (<code><a href="/graphql-api-docs/object/shipping">shipping</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="coupons" class="field-name anchored">coupons (<code><a href="/graphql-api-docs/object/coupon">[coupon]</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="shipping_methods" class="field-name anchored">shipping_methods (<code><a href="/graphql-api-docs/object/shipping">[shipping]</a></code>)</span>
+  <div class="description-wrapper">
+   <p>Available shipping methods for cart</p>
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="payment_methods" class="field-name anchored">payment_methods (<code><a href="/graphql-api-docs/object/payment">[payment]</a></code>)</span>
+  <div class="description-wrapper">
+   <p>Available payment methods for cart</p>
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="notes" class="field-name anchored">notes (<code><a href="/graphql-api-docs/scalar/string">String</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="markups_list" class="field-name anchored">markups_list (<code><a href="/graphql-api-docs/scalar/string">[String]</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="total" class="field-name anchored">total (<code><a href="/graphql-api-docs/scalar/float">Float</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="total_amount" class="field-name anchored">total_amount (<code><a href="/graphql-api-docs/scalar/int">Int</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="checkout_ready" class="field-name anchored">checkout_ready (<code><a href="/graphql-api-docs/scalar/boolean">Boolean</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="same_address" class="field-name anchored">same_address (<code><a href="/graphql-api-docs/scalar/boolean">Boolean</a></code>)</span>
+  <div class="description-wrapper">
+  </div>
+</div>
+<div class="field-entry ">
+  <span id="errors" class="field-name anchored">errors (<code><a href="/graphql-api-docs/enum/cart_error">[cart_error]</a></code>)</span>
+  <div class="description-wrapper">
   </div>
 </div>
 

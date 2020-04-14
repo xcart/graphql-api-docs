@@ -13,7 +13,7 @@ type address {
   address: String
   zip: String
   phone: String
-  fax: String
+  fax: String @deprecated(reason: "Default X-Cart system doesn't have fax field")
 }
 
 """Address input type"""
@@ -111,6 +111,7 @@ type cart {
   total: Float
   total_amount: Int
   checkout_ready: Boolean
+  same_address: Boolean
   errors: [cart_error]
 }
 
@@ -295,8 +296,11 @@ type Mutation {
   """Change orderItem amount"""
   changeItemAmount(item_id: ID!, amount: Int!): cart
 
+  """Add address"""
+  addAddress(type: address_type_enum!, address: address_input!): cart
+
   """Change address"""
-  changeAddress(type: String!, address: address_input!): cart
+  changeAddress(type: address_type_enum!, address: address_input!): cart
 
   """Change payment method of the cart"""
   changePaymentMethod(payment_id: ID!): cart
@@ -311,7 +315,7 @@ type Mutation {
   changeCustomerNotes(notes: String!): cart
 
   """Select address by id"""
-  selectAddress(type: String!, address_id: ID!): cart
+  selectAddress(type: address_type_enum!, address_id: ID!): cart
 
   """Remove address from address book"""
   deleteUserAddress(address_id: ID!): user
