@@ -563,7 +563,7 @@ Once these steps are done and the cart is in `checkout_ready = true` state, you 
 
 Use **WKWebView** to open URL stored in `checkout_url` param of the `cart` object. The WebView **must** follow redirects and respond to user clicks. The payment screen will either continue to the success page or proceed to the payment processor. 
 
-In order to return back to the app in case order is placed or errors happened, you should implement Script Messages handler by the name of `status` and react accordingly. Look at [Status message structure](#status-message-structure) section for details
+In order to return back to the app in case order is placed or errors happened, you should implement Script Messages handler by the name of `status` and react accordingly. Look at [Status message structure](#status-message-structure-and-handling-1) section for details
 
 Very approximate Swift UIViewController implementation might look like this:
 

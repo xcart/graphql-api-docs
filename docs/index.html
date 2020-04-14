@@ -1179,7 +1179,7 @@ Result:</p>
 <h3>
 <a id="ios-webview-implementation" class="anchor" href="#ios-webview-implementation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>iOS WebView implementation</h3>
 <p>Use <strong>WKWebView</strong> to open URL stored in <code>checkout_url</code> param of the <code>cart</code> object. The WebView <strong>must</strong> follow redirects and respond to user clicks. The payment screen will either continue to the success page or proceed to the payment processor.</p>
-<p>In order to return back to the app in case order is placed or errors happened, you should implement Script Messages handler by the name of <code>status</code> and react accordingly. Look at <a href="#status-message-structure">Status message structure</a> section for details</p>
+<p>In order to return back to the app in case order is placed or errors happened, you should implement Script Messages handler by the name of <code>status</code> and react accordingly. Look at <a href="#status-message-structure-and-handling-1">Status message structure</a> section for details</p>
 <p>Very approximate Swift UIViewController implementation might look like this:</p>
 <pre><code>import UIKit
 import WebKit
