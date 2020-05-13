@@ -528,7 +528,7 @@ mutation {
 
 ## External auth
 
-Version 5.4.1.0 of the GraphQLApi adds the ability to perform an external authorization with the help of the OAuth2Client addon (insert market link). You can retrieve the list of available auth providers via the following query:
+Version 5.4.1.0 of the GraphQLApi adds the ability to perform an external authorization with the help of the [OAuth2Client addon](https://market.x-cart.com/addons/single-sign-on-with-oauth-2.html). You can retrieve the list of available auth providers via the following query:
 
 ```
 query {
