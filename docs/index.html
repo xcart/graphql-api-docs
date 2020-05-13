@@ -1254,7 +1254,121 @@ Result:</p>
 <li>Set payment options (if required) with <a href="#changepaymentfields-mutation">ChangePaymentFields</a> mutation</li>
 <li>(OPTIONAL) Set customer notes with <a href="#changecustomernotes-mutation">ChangeCustomerNotes</a> mutation</li>
 </ol>
-<p>Once these steps are done and the cart is in <code>checkout_ready = true</code> state, you are ready to allow customer to place an order. The payment process is performed inside WebView to allow for various payment providers.</p>
+<p>Once these steps are done and the cart is in <code>checkout_ready = true</code> state, you are ready to allow customer to place an order. The payment process is performed inside WebView to allow for various payment providers. See <a href="#webview-implementation">WebView implementation</a> for details.</p>
+<h3>
+<a id="payment-method-options" class="anchor" href="#payment-method-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Payment method options</h3>
+<p>You can retrieve available payment options from <strong>payment_methods</strong> prop of the <strong>cart</strong> object:</p>
+<pre><code>  cart {
+    id
+    user {
+      email
+    }
+    items {
+      id
+    }
+    payment_methods {
+      id
+      service_name
+      payment_name
+      details
+      fields {
+        id
+        name
+        value
+      }
+    }
+  }
+</code></pre>
+<p>In general, all payment_methods won’t require any fields to set up before performing checkout, but you might receive the similar <strong>payment_method</strong> object:</p>
+<pre><code>        {
+          "id": "5",
+          "service_name": "Echeck",
+          "payment_name": "Check",
+          "details": "Check payment",
+          "fields": [
+            {
+              "id": "check_routing_number",
+              "name": "ABA routing number",
+              "value": ""
+            },
+            {
+              "id": "check_acct_number",
+              "name": "Bank Account Number",
+              "value": ""
+            },
+            {
+              "id": "check_type",
+              "name": "Type of Account",
+              "value": ""
+            },
+            {
+              "id": "check_bank_name",
+              "name": "Bank name",
+              "value": ""
+            },
+            {
+              "id": "check_acct_name",
+              "name": "Name of account holder",
+              "value": ""
+            },
+            {
+              "id": "check_number",
+              "name": "Check number",
+              "value": ""
+            }
+          ]
+        },
+</code></pre>
+<p>In order to perform successful checkout with such method, you have perform a <a href="#changepaymentfields-mutation">ChangePaymentFields mutation</a> with a similar request:</p>
+<pre><code>mutation ($fields: [payment_fields_input]!) {
+  changePaymentFields(fields: $fields) {
+    payment {
+      id
+      service_name
+      fields {
+        id
+        name
+        value
+      }
+    }
+  }
+}
+</code></pre>
+<p>With vars:</p>
+<pre><code>{
+  "fields": [{
+    "id": "check_routing_number",
+    "value": "123456789"
+  }],
+  "context": {    "jwt":"....jwt...."
+  }
+}
+</code></pre>
+<h3>
+<a id="coupons-feature-requires-coupons-add-on" class="anchor" href="#coupons-feature-requires-coupons-add-on" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Coupons feature (requires "Coupons" add-on)</h3>
+<p>You can add coupons to the cart by using <strong>addCartCoupon(code)</strong> mutation and remove coupons by using <strong>removeCartCoupon(code)</strong>  mutation. If coupon is valid, it will be applied to the cart and the cart <strong>total</strong> value will be changed.</p>
+<p>The <strong>coupons</strong>property of the cart will contain currently applied coupons.</p>
+<p>Also, there is a list of error messages in case coupon code is invalid or cannot be applied for a reason (the message is translated according to the current language):</p>
+<ul>
+<li>No coupon for <strong>CODE</strong>
+</li>
+<li>Sorry, the coupon you entered is invalid. Make sure the coupon code is spelled correctly</li>
+<li>Sorry, the coupon has expired</li>
+<li>Sorry, the coupon use limit has been reached</li>
+<li>You have already used the coupon</li>
+<li>This coupon cannot be combined with other coupons</li>
+<li>Sorry, this coupon cannot be combined with the coupon already applied. Revome the previously applied coupon and try again.</li>
+<li>To use the coupon, your order subtotal must be between <strong>X</strong> and <strong>Y</strong>
+</li>
+<li>To use the coupon, your order subtotal must be at least <strong>X</strong>
+</li>
+<li>To use the coupon, your order subtotal must not exceed <strong>Y</strong>
+</li>
+<li>Sorry, the coupon you entered cannot be applied to the items in your cart</li>
+<li>Sorry, the coupon you entered is not valid for your membership level. Contact the administrator</li>
+<li>There is no such a coupon, please check the spelling: <strong>X</strong>
+</li>
+</ul>
 <h2>
 <a id="webview-implementation" class="anchor" href="#webview-implementation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>WebView implementation</h2>
 <p>To allow for such operations like performing checkout or authorizing user with external auth provider, you have to implement a WebView in a special way to be able to get status updates from the backend and return properly back to your application. The implementation differs for iOS and Android systems.</p>
@@ -1345,95 +1459,6 @@ webView.addJavascriptInterface(new StatusMessageHandler(), "statusMessageHandler
 ]
 </code></pre>
 <p>Notice that you won't have access to the same <code>cart</code> object after order is placed.</p>
-<h3>
-<a id="payment-method-options" class="anchor" href="#payment-method-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Payment method options</h3>
-<p>You can retrieve available payment options from <strong>payment_methods</strong> prop of the <strong>cart</strong> object:</p>
-<pre><code>  cart {
-    id
-    user {
-      email
-    }
-    items {
-      id
-    }
-    payment_methods {
-      id
-      service_name
-      payment_name
-      details
-      fields {
-        id
-        name
-        value
-      }
-    }
-  }
-</code></pre>
-<p>In general, all payment_methods won’t require any fields to set up before performing checkout, but you might receive the similar <strong>payment_method</strong> object:</p>
-<pre><code>        {
-          "id": "5",
-          "service_name": "Echeck",
-          "payment_name": "Check",
-          "details": "Check payment",
-          "fields": [
-            {
-              "id": "check_routing_number",
-              "name": "ABA routing number",
-              "value": ""
-            },
-            {
-              "id": "check_acct_number",
-              "name": "Bank Account Number",
-              "value": ""
-            },
-            {
-              "id": "check_type",
-              "name": "Type of Account",
-              "value": ""
-            },
-            {
-              "id": "check_bank_name",
-              "name": "Bank name",
-              "value": ""
-            },
-            {
-              "id": "check_acct_name",
-              "name": "Name of account holder",
-              "value": ""
-            },
-            {
-              "id": "check_number",
-              "name": "Check number",
-              "value": ""
-            }
-          ]
-        },
-</code></pre>
-<p>In order to perform successful checkout with such method, you have perform a <a href="#changepaymentfields-mutation">ChangePaymentFields mutation</a> with a similar request:</p>
-<pre><code>mutation ($fields: [payment_fields_input]!) {
-  changePaymentFields(fields: $fields) {
-    payment {
-      id
-      service_name
-      fields {
-        id
-        name
-        value
-      }
-    }
-  }
-}
-</code></pre>
-<p>With vars:</p>
-<pre><code>{
-  "fields": [{
-    "id": "check_routing_number",
-    "value": "123456789"
-  }],
-  "context": {    "jwt":"....jwt...."
-  }
-}
-</code></pre>
 <h2>
 <a id="checkout-related-queries" class="anchor" href="#checkout-related-queries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Checkout-related queries</h2>
 <h4>
@@ -1665,31 +1690,6 @@ webView.addJavascriptInterface(new StatusMessageHandler(), "statusMessageHandler
    }
  }
 </code></pre>
-<h3>
-<a id="coupons-feature-requires-coupons-add-on" class="anchor" href="#coupons-feature-requires-coupons-add-on" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Coupons feature (requires "Coupons" add-on)</h3>
-<p>You can add coupons to the cart by using <strong>addCartCoupon(code)</strong> mutation and remove coupons by using <strong>removeCartCoupon(code)</strong>  mutation. If coupon is valid, it will be applied to the cart and the cart <strong>total</strong> value will be changed.</p>
-<p>The <strong>coupons</strong>property of the cart will contain currently applied coupons.</p>
-<p>Also, there is a list of error messages in case coupon code is invalid or cannot be applied for a reason (the message is translated according to the current language):</p>
-<ul>
-<li>No coupon for <strong>CODE</strong>
-</li>
-<li>Sorry, the coupon you entered is invalid. Make sure the coupon code is spelled correctly</li>
-<li>Sorry, the coupon has expired</li>
-<li>Sorry, the coupon use limit has been reached</li>
-<li>You have already used the coupon</li>
-<li>This coupon cannot be combined with other coupons</li>
-<li>Sorry, this coupon cannot be combined with the coupon already applied. Revome the previously applied coupon and try again.</li>
-<li>To use the coupon, your order subtotal must be between <strong>X</strong> and <strong>Y</strong>
-</li>
-<li>To use the coupon, your order subtotal must be at least <strong>X</strong>
-</li>
-<li>To use the coupon, your order subtotal must not exceed <strong>Y</strong>
-</li>
-<li>Sorry, the coupon you entered cannot be applied to the items in your cart</li>
-<li>Sorry, the coupon you entered is not valid for your membership level. Contact the administrator</li>
-<li>There is no such a coupon, please check the spelling: <strong>X</strong>
-</li>
-</ul>
 
       </div>
 

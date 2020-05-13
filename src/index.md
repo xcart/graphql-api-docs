@@ -602,7 +602,138 @@ Cart preparation steps are usually the following:
 6. Set payment options (if required) with [ChangePaymentFields](#changepaymentfields-mutation) mutation
 7. (OPTIONAL) Set customer notes with [ChangeCustomerNotes](#changecustomernotes-mutation) mutation
 
-Once these steps are done and the cart is in `checkout_ready = true` state, you are ready to allow customer to place an order. The payment process is performed inside WebView to allow for various payment providers. 
+Once these steps are done and the cart is in `checkout_ready = true` state, you are ready to allow customer to place an order. The payment process is performed inside WebView to allow for various payment providers. See [WebView implementation](#webview-implementation) for details.
+
+### Payment method options 
+
+You can retrieve available payment options from **payment_methods** prop of the **cart** object:
+
+
+```
+  cart {
+    id
+    user {
+      email
+    }
+    items {
+      id
+    }
+    payment_methods {
+      id
+      service_name
+      payment_name
+      details
+      fields {
+        id
+        name
+        value
+      }
+    }
+  }
+```
+
+
+In general, all payment_methods won’t require any fields to set up before performing checkout, but you might receive the similar **payment_method** object:
+
+
+```
+        {
+          "id": "5",
+          "service_name": "Echeck",
+          "payment_name": "Check",
+          "details": "Check payment",
+          "fields": [
+            {
+              "id": "check_routing_number",
+              "name": "ABA routing number",
+              "value": ""
+            },
+            {
+              "id": "check_acct_number",
+              "name": "Bank Account Number",
+              "value": ""
+            },
+            {
+              "id": "check_type",
+              "name": "Type of Account",
+              "value": ""
+            },
+            {
+              "id": "check_bank_name",
+              "name": "Bank name",
+              "value": ""
+            },
+            {
+              "id": "check_acct_name",
+              "name": "Name of account holder",
+              "value": ""
+            },
+            {
+              "id": "check_number",
+              "name": "Check number",
+              "value": ""
+            }
+          ]
+        },
+```
+
+
+In order to perform successful checkout with such method, you have perform a [ChangePaymentFields mutation](#changepaymentfields-mutation) with a similar request:
+
+
+```
+mutation ($fields: [payment_fields_input]!) {
+  changePaymentFields(fields: $fields) {
+    payment {
+      id
+      service_name
+      fields {
+        id
+        name
+        value
+      }
+    }
+  }
+}
+```
+
+
+With vars:
+
+
+```
+{
+  "fields": [{
+    "id": "check_routing_number",
+    "value": "123456789"
+  }],
+  "context": {    "jwt":"....jwt...."
+  }
+}
+```
+
+
+### Coupons feature (requires "Coupons" add-on) 
+
+You can add coupons to the cart by using **addCartCoupon(code)** mutation and remove coupons by using **removeCartCoupon(code)**  mutation. If coupon is valid, it will be applied to the cart and the cart **total** value will be changed. 
+
+The **coupons**property of the cart will contain currently applied coupons.
+
+Also, there is a list of error messages in case coupon code is invalid or cannot be applied for a reason (the message is translated according to the current language):
+
+*   No coupon for **CODE**
+*   Sorry, the coupon you entered is invalid. Make sure the coupon code is spelled correctly
+*   Sorry, the coupon has expired
+*   Sorry, the coupon use limit has been reached
+*   You have already used the coupon
+*   This coupon cannot be combined with other coupons
+*   Sorry, this coupon cannot be combined with the coupon already applied. Revome the previously applied coupon and try again.
+*   To use the coupon, your order subtotal must be between **X** and **Y**
+*   To use the coupon, your order subtotal must be at least **X**
+*   To use the coupon, your order subtotal must not exceed **Y**
+*   Sorry, the coupon you entered cannot be applied to the items in your cart
+*   Sorry, the coupon you entered is not valid for your membership level. Contact the administrator
+*   There is no such a coupon, please check the spelling: **X**
 
 ## WebView implementation
 
@@ -713,114 +844,6 @@ If `status` is `auth_success` or `auth_failure`, the user has tried to authorize
 ``` 
 
 Notice that you won't have access to the same `cart` object after order is placed.
-
-### Payment method options 
-
-You can retrieve available payment options from **payment_methods** prop of the **cart** object:
-
-
-```
-  cart {
-    id
-    user {
-      email
-    }
-    items {
-      id
-    }
-    payment_methods {
-      id
-      service_name
-      payment_name
-      details
-      fields {
-        id
-        name
-        value
-      }
-    }
-  }
-```
-
-
-In general, all payment_methods won’t require any fields to set up before performing checkout, but you might receive the similar **payment_method** object:
-
-
-```
-        {
-          "id": "5",
-          "service_name": "Echeck",
-          "payment_name": "Check",
-          "details": "Check payment",
-          "fields": [
-            {
-              "id": "check_routing_number",
-              "name": "ABA routing number",
-              "value": ""
-            },
-            {
-              "id": "check_acct_number",
-              "name": "Bank Account Number",
-              "value": ""
-            },
-            {
-              "id": "check_type",
-              "name": "Type of Account",
-              "value": ""
-            },
-            {
-              "id": "check_bank_name",
-              "name": "Bank name",
-              "value": ""
-            },
-            {
-              "id": "check_acct_name",
-              "name": "Name of account holder",
-              "value": ""
-            },
-            {
-              "id": "check_number",
-              "name": "Check number",
-              "value": ""
-            }
-          ]
-        },
-```
-
-
-In order to perform successful checkout with such method, you have perform a [ChangePaymentFields mutation](#changepaymentfields-mutation) with a similar request:
-
-
-```
-mutation ($fields: [payment_fields_input]!) {
-  changePaymentFields(fields: $fields) {
-    payment {
-      id
-      service_name
-      fields {
-        id
-        name
-        value
-      }
-    }
-  }
-}
-```
-
-
-With vars:
-
-
-```
-{
-  "fields": [{
-    "id": "check_routing_number",
-    "value": "123456789"
-  }],
-  "context": {    "jwt":"....jwt...."
-  }
-}
-```
 
 ## Checkout-related queries
 
@@ -1090,25 +1113,3 @@ mutation ChangeShippingMethod($notes: String!) {
    }
  }
 ```
-
-### Coupons feature (requires "Coupons" add-on) 
-
-You can add coupons to the cart by using **addCartCoupon(code)** mutation and remove coupons by using **removeCartCoupon(code)**  mutation. If coupon is valid, it will be applied to the cart and the cart **total** value will be changed. 
-
-The **coupons**property of the cart will contain currently applied coupons.
-
-Also, there is a list of error messages in case coupon code is invalid or cannot be applied for a reason (the message is translated according to the current language):
-
-*   No coupon for **CODE**
-*   Sorry, the coupon you entered is invalid. Make sure the coupon code is spelled correctly
-*   Sorry, the coupon has expired
-*   Sorry, the coupon use limit has been reached
-*   You have already used the coupon
-*   This coupon cannot be combined with other coupons
-*   Sorry, this coupon cannot be combined with the coupon already applied. Revome the previously applied coupon and try again.
-*   To use the coupon, your order subtotal must be between **X** and **Y**
-*   To use the coupon, your order subtotal must be at least **X**
-*   To use the coupon, your order subtotal must not exceed **Y**
-*   Sorry, the coupon you entered cannot be applied to the items in your cart
-*   Sorry, the coupon you entered is not valid for your membership level. Contact the administrator
-*   There is no such a coupon, please check the spelling: **X**
