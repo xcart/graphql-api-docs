@@ -1143,6 +1143,40 @@ Result:</p>
 }
 </code></pre>
 <h2>
+<a id="external-auth" class="anchor" href="#external-auth" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>External auth</h2>
+<p>Version 5.4.1.0 of the GraphQLApi adds the ability to perform an external authorization with the help of the OAuth2Client addon (insert market link). You can retrieve the list of available auth providers via the following query:</p>
+<pre><code>query {
+  appData {
+    external_auth_providers {
+      display_name
+      service_name
+      authorize_url
+    }
+  }
+}
+</code></pre>
+<p>In order to link the external user account with the X-Cart and receive user GraphQL token, you have to open <code>authorize_url</code> in a WebView inside your application and then allow user to proceed with the authorization. Eventually the user will be redirected to the website and you will be able to receive a GraphQL Token via WebView Messaging system. See <a href="#webview-implementation">WebView implementation</a> for details.</p>
+<p>In case you already implemented an auth system inside your app and want to connect it with the X-Cart, you can perform the following mutation:</p>
+<pre><code>mutation externalAuth ($auth: ExternalAuthInput!) {
+  externalAuth (auth: $auth) 
+}
+</code></pre>
+<p>With this variable format:</p>
+<pre><code>{
+  "auth": {
+    "provider": &lt;provider service name&gt; (string),
+    "access_token": {
+      "access_token": &lt;OAuth2 token string&gt; (required),
+      "resource_owner_id": (optional),
+      "refresh_token": (optional),
+      "expires_in": (optional),
+      "expires": (optional),
+    }
+  }
+}
+</code></pre>
+<p>This mutation will return a JWT token in case of successful authorization and profile creation inside the backend.</p>
+<h2>
 <a id="checkout-flow" class="anchor" href="#checkout-flow" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Checkout flow</h2>
 <p>The API can be used to place orders on the store and provide a customer with an ability to perform the payment on the selected payment processor page. Due to complexity, it has to be implemented in a certain way. The general flow is based on the UI, split by 3 major steps:</p>
 <ul>
@@ -1175,10 +1209,13 @@ Result:</p>
 <li>Set payment options (if required) with <a href="#changepaymentfields-mutation">ChangePaymentFields</a> mutation</li>
 <li>(OPTIONAL) Set customer notes with <a href="#changecustomernotes-mutation">ChangeCustomerNotes</a> mutation</li>
 </ol>
-<p>Once these steps are done and the cart is in <code>checkout_ready = true</code> state, you are ready to allow customer to place an order. The payment process is performed inside WebView to allow for various payment providers. The implementation differs for iOS and Android systems.</p>
+<p>Once these steps are done and the cart is in <code>checkout_ready = true</code> state, you are ready to allow customer to place an order. The payment process is performed inside WebView to allow for various payment providers.</p>
+<h2>
+<a id="webview-implementation" class="anchor" href="#webview-implementation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>WebView Implementation</h2>
+<p>To allow for such operations like performing checkout or authorizing user with external auth provider, you have to implement a WebView in a special way to be able to get status updates from the backend and return properly back to your application. The implementation differs for iOS and Android systems.</p>
 <h3>
 <a id="ios-webview-implementation" class="anchor" href="#ios-webview-implementation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>iOS WebView implementation</h3>
-<p>Use <strong>WKWebView</strong> to open URL stored in <code>checkout_url</code> param of the <code>cart</code> object. The WebView <strong>must</strong> follow redirects and respond to user clicks. The payment screen will either continue to the success page or proceed to the payment processor.</p>
+<p>For checkout, use <strong>WKWebView</strong> to open URL stored in <code>checkout_url</code> param of the <code>cart</code> object. The WebView <strong>must</strong> follow redirects and respond to user clicks. The payment screen will either continue to the success page or proceed to the payment processor.</p>
 <p>In order to return back to the app in case order is placed or errors happened, you should implement Script Messages handler by the name of <code>status</code> and react accordingly. Look at <a href="#status-message-structure-and-handling-1">Status message structure</a> section for details</p>
 <p>Very approximate Swift UIViewController implementation might look like this:</p>
 <pre><code>import UIKit
@@ -1236,11 +1273,14 @@ webview.getSettings().setJavaScriptEnabled(true);
 webView.addJavascriptInterface(new StatusMessageHandler(), "statusMessageHandler");
 </code></pre>
 <h3>
-<a id="status-message-structure-and-handling" class="anchor" href="#status-message-structure-and-handling" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Status message structure and handling</h3>
+<a id="webview-status-message-structure-and-handling" class="anchor" href="#webview-status-message-structure-and-handling" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>WebView status message structure and handling</h3>
 <p>Message is a JSON-like object of the following structure:</p>
 <pre><code>{
   "last_order_number": "#00001", // string
-  "status": "success", // string
+  "status": "success", // operation status, string,
+  "data": [
+    // operation-specific format
+  ],
   "messages": [
     ["type": "error", 
      "text": "Some text...", 
@@ -1248,7 +1288,17 @@ webView.addJavascriptInterface(new StatusMessageHandler(), "statusMessageHandler
   ]
 }
 </code></pre>
-<p>If <code>status</code> property is <code>success</code>, this means you should stop the WebView and show the customer final screen with order confirmation and number from <code>last_order_number</code> property. If <code>status</code> is <code>errors</code>, you should stop the WebView and return him on the checkout screen, and display errors from the <code>messages</code> array in popup fashion. In other cases <code>status</code> property will be an empty string.</p>
+<p>The <code>status</code> property indicates the state which can lead to a further actions from the app.</p>
+<p>If <code>status</code> is <code>success</code>, this means you should stop the WebView and show the  final screen with order confirmation and number from <code>last_order_number</code> property to customer.</p>
+<p>If <code>status</code> is <code>errors</code>, you should stop the WebView and return the user on the checkout screen, and display errors from the <code>messages</code> array in popup fashion. In other cases <code>status</code> property will be an empty string.</p>
+<p>If <code>status</code> is <code>auth_success</code> or <code>auth_failure</code>, the user has tried to authorize with the external provider. Read <code>data</code> property to get operation details. The <code>data</code> format is the following:</p>
+<pre><code>[
+  'success' =&gt; true|false, // authorization success, boolean
+  'profile_id' =&gt; &lt;integer&gt;, // profile id, integer
+  'token' =&gt; &lt;string&gt;, // JWT string to be used as GraphQL token, string
+  'message' =&gt; &lt;string&gt;, // status message, string
+]
+</code></pre>
 <p>Notice that you won't have access to the same <code>cart</code> object after order is placed.</p>
 <h3>
 <a id="payment-method-options" class="anchor" href="#payment-method-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Payment method options</h3>
