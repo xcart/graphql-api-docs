@@ -523,7 +523,49 @@ mutation {
 }
 ```
 
+## External auth
 
+Version 5.4.1.0 of the GraphQLApi adds the ability to perform an external authorization with the help of the OAuth2Client addon (insert market link). You can retrieve the list of available auth providers via the following query:
+
+```
+query {
+  appData {
+    external_auth_providers {
+      display_name
+      service_name
+      authorize_url
+    }
+  }
+}
+```
+
+In order to link the external user account with the X-Cart and receive user GraphQL token, you have to open `authorize_url` in a WebView inside your application and then allow user to proceed with the authorization. Eventually the user will be redirected to the website and you will be able to receive a GraphQL Token via WebView Messaging system. See [WebView implementation](#webview-implementation) for details.
+
+In case you already implemented an auth system inside your app and want to connect it with the X-Cart, you can perform the following mutation:
+
+```
+mutation externalAuth ($auth: ExternalAuthInput!) {
+  externalAuth (auth: $auth) 
+}
+```
+
+With this variable format:
+```
+{
+  "auth": {
+    "provider": <provider service name> (string),
+    "access_token": {
+      "access_token": <OAuth2 token string> (required),
+      "resource_owner_id": (optional),
+      "refresh_token": (optional),
+      "expires_in": (optional),
+      "expires": (optional),
+    }
+  }
+}
+```
+
+This mutation will return a JWT token in case of successful authorization and profile creation inside the backend.
 
 ## Checkout flow 
 
@@ -557,11 +599,15 @@ Cart preparation steps are usually the following:
 6. Set payment options (if required) with [ChangePaymentFields](#changepaymentfields-mutation) mutation
 7. (OPTIONAL) Set customer notes with [ChangeCustomerNotes](#changecustomernotes-mutation) mutation
 
-Once these steps are done and the cart is in `checkout_ready = true` state, you are ready to allow customer to place an order. The payment process is performed inside WebView to allow for various payment providers. The implementation differs for iOS and Android systems.
+Once these steps are done and the cart is in `checkout_ready = true` state, you are ready to allow customer to place an order. The payment process is performed inside WebView to allow for various payment providers. 
+
+## WebView Implementation
+
+To allow for such operations like performing checkout or authorizing user with external auth provider, you have to implement a WebView in a special way to be able to get status updates from the backend and return properly back to your application. The implementation differs for iOS and Android systems.
 
 ### iOS WebView implementation
 
-Use **WKWebView** to open URL stored in `checkout_url` param of the `cart` object. The WebView **must** follow redirects and respond to user clicks. The payment screen will either continue to the success page or proceed to the payment processor. 
+For checkout, use **WKWebView** to open URL stored in `checkout_url` param of the `cart` object. The WebView **must** follow redirects and respond to user clicks. The payment screen will either continue to the success page or proceed to the payment processor. 
 
 In order to return back to the app in case order is placed or errors happened, you should implement Script Messages handler by the name of `status` and react accordingly. Look at [Status message structure](#status-message-structure-and-handling-1) section for details
 
@@ -627,14 +673,17 @@ webview.getSettings().setJavaScriptEnabled(true);
 webView.addJavascriptInterface(new StatusMessageHandler(), "statusMessageHandler");
 ```
 
-### Status message structure and handling
+### WebView status message structure and handling
 
 Message is a JSON-like object of the following structure:
 
 ```
 {
   "last_order_number": "#00001", // string
-  "status": "success", // string
+  "status": "success", // operation status, string,
+  "data": [
+    // operation-specific format
+  ],
   "messages": [
     ["type": "error", 
      "text": "Some text...", 
@@ -643,7 +692,22 @@ Message is a JSON-like object of the following structure:
 }
 ```
 
-If `status` property is `success`, this means you should stop the WebView and show the customer final screen with order confirmation and number from `last_order_number` property. If `status` is `errors`, you should stop the WebView and return him on the checkout screen, and display errors from the `messages` array in popup fashion. In other cases `status` property will be an empty string.
+The `status` property indicates the state which can lead to a further actions from the app. 
+
+If `status` is `success`, this means you should stop the WebView and show the  final screen with order confirmation and number from `last_order_number` property to customer.
+
+If `status` is `errors`, you should stop the WebView and return the user on the checkout screen, and display errors from the `messages` array in popup fashion. In other cases `status` property will be an empty string.
+
+If `status` is `auth_success` or `auth_failure`, the user has tried to authorize with the external provider. Read `data` property to get operation details. The `data` format is the following:
+
+```
+[
+  'success' => true|false, // authorization success, boolean
+  'profile_id' => <integer>, // profile id, integer
+  'token' => <string>, // JWT string to be used as GraphQL token, string
+  'message' => <string>, // status message, string
+]
+``` 
 
 Notice that you won't have access to the same `cart` object after order is placed.
 
@@ -1026,8 +1090,6 @@ mutation ChangeShippingMethod($notes: String!) {
  }
 ```
 
-
-
 ### Coupons feature (requires "Coupons" add-on) 
 
 You can add coupons to the cart by using **addCartCoupon(code)** mutation and remove coupons by using **removeCartCoupon(code)**  mutation. If coupon is valid, it will be applied to the cart and the cart **total** value will be changed. 
@@ -1035,8 +1097,6 @@ You can add coupons to the cart by using **addCartCoupon(code)** mutation and re
 The **coupons**property of the cart will contain currently applied coupons.
 
 Also, there is a list of error messages in case coupon code is invalid or cannot be applied for a reason (the message is translated according to the current language):
-
-
 
 *   No coupon for **CODE**
 *   Sorry, the coupon you entered is invalid. Make sure the coupon code is spelled correctly
