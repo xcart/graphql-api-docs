@@ -818,7 +818,10 @@
 <li><a href="#authentication">Authentication</a></li>
 <li><a href="#module-related-queries">Module-related queries</a></li>
 <li><a href="#examples">Examples</a></li>
+<li><a href="#external-auth">External auth</a></li>
 <li><a href="#checkout-flow">Checkout flow</a></li>
+<li><a href="#webview-implementation">WebView implementation</a></li>
+<li><a href="#checkout-related-queries">Checkout-related queries</a></li>
 </ul>
 <p>X-Cart 5 can be enhanced with the following add-ons to provide GraphQL compatible catalog API, suitable for making alternative frontend apps (e.g. mobile apps):</p>
 <ul>
@@ -1253,7 +1256,7 @@ Result:</p>
 </ol>
 <p>Once these steps are done and the cart is in <code>checkout_ready = true</code> state, you are ready to allow customer to place an order. The payment process is performed inside WebView to allow for various payment providers.</p>
 <h2>
-<a id="webview-implementation" class="anchor" href="#webview-implementation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>WebView Implementation</h2>
+<a id="webview-implementation" class="anchor" href="#webview-implementation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>WebView implementation</h2>
 <p>To allow for such operations like performing checkout or authorizing user with external auth provider, you have to implement a WebView in a special way to be able to get status updates from the backend and return properly back to your application. The implementation differs for iOS and Android systems.</p>
 <h3>
 <a id="ios-webview-implementation" class="anchor" href="#ios-webview-implementation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>iOS WebView implementation</h3>
@@ -1431,8 +1434,8 @@ webView.addJavascriptInterface(new StatusMessageHandler(), "statusMessageHandler
   }
 }
 </code></pre>
-<h3>
-<a id="checkout-related-queries--mutations" class="anchor" href="#checkout-related-queries--mutations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Checkout-related Queries &amp; Mutations</h3>
+<h2>
+<a id="checkout-related-queries" class="anchor" href="#checkout-related-queries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Checkout-related queries</h2>
 <h4>
 <a id="checkoutshippingpagequery" class="anchor" href="#checkoutshippingpagequery" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CheckoutShippingPageQuery</h4>
 <pre><code>query CheckoutShippingPageQuery {

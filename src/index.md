@@ -9,7 +9,10 @@ title: "X-Cart GraphQL API Provider"
 - [Authentication](#authentication)
 - [Module-related queries](#module-related-queries)
 - [Examples](#examples)
+- [External auth](#external-auth)
 - [Checkout flow](#checkout-flow)
+- [WebView implementation](#webview-implementation)
+- [Checkout-related queries](#checkout-related-queries)
 
 X-Cart 5 can be enhanced with the following add-ons to provide GraphQL compatible catalog API, suitable for making alternative frontend apps (e.g. mobile apps):
 
@@ -601,7 +604,7 @@ Cart preparation steps are usually the following:
 
 Once these steps are done and the cart is in `checkout_ready = true` state, you are ready to allow customer to place an order. The payment process is performed inside WebView to allow for various payment providers. 
 
-## WebView Implementation
+## WebView implementation
 
 To allow for such operations like performing checkout or authorizing user with external auth provider, you have to implement a WebView in a special way to be able to get status updates from the backend and return properly back to your application. The implementation differs for iOS and Android systems.
 
@@ -819,9 +822,7 @@ With vars:
 }
 ```
 
-
-
-### Checkout-related Queries & Mutations 
+## Checkout-related queries
 
 
 #### CheckoutShippingPageQuery
