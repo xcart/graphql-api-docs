@@ -16,8 +16,8 @@ title: "X-Cart GraphQL API Provider"
 
 X-Cart 5 can be enhanced with the following add-ons to provide GraphQL compatible catalog API, suitable for making alternative frontend apps (e.g. mobile apps):
 
-*   QSL\GraphQLApi (v5.4.0)
-*   QSL\MobileApp (v.5.4.0)
+*   QSL\GraphQLApi (v5.4.1)
+*   QSL\MobileApp (v5.4.0)
 
 These add-ons don’t provide the capability to allow for an admin-level application yet but can be easily extended to add more queries and mutations.
 
