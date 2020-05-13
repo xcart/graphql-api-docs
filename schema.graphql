@@ -1,3 +1,12 @@
+"""User external authentication access token"""
+input AccessToken {
+  access_token: String!
+  resource_owner_id: ID
+  refresh_token: String
+  expires_in: Int
+  expires: Int
+}
+
 """Address model"""
 type address {
   id: ID
@@ -69,12 +78,27 @@ type app_data {
   memberships: [membership]
   modules: [module]
   home_page_widgets: [homePageWidget]
+  external_auth_providers: [authProvider]
 }
 
 """User authentication input type"""
 input AuthInput {
   login: String
   password: String
+}
+
+"""External OAuth2-compatible authorization provider"""
+type authProvider {
+  """Auth provider display name"""
+  display_name: String
+
+  """Auth provider service name"""
+  service_name: String
+
+  """
+  Authorize grant URL. Open that in WebView to allow user to pass the grant and code acquiring process.
+  """
+  authorize_url: String
 }
 
 """Banner model"""
@@ -111,6 +135,7 @@ type cart {
   total: Float
   total_amount: Int
   checkout_ready: Boolean
+  payment_selection_ready: Boolean
   same_address: Boolean
   errors: [cart_error]
 }
@@ -131,6 +156,9 @@ enum cart_error {
 
   """No shipping address"""
   NO_SHIPPING_ADDRESS
+
+  """Non full shipping address, some required fields are invalid"""
+  NON_FULL_SHIPPING_ADDRESS
 }
 
 """Category model"""
@@ -226,6 +254,12 @@ type currency {
   e: Int
   delimiter: String
   thousands_delimiter: String
+}
+
+"""User external authentication input type"""
+input ExternalAuthInput {
+  provider: String!
+  access_token: AccessToken!
 }
 
 """FAQ model"""
@@ -328,6 +362,11 @@ type Mutation {
 
   """Get auth token for plain client ID or optionally for system user"""
   auth(auth: AuthInput!, client: ClientInput): String
+
+  """
+  Get auth token for plain client ID or optionally for system user by using external token
+  """
+  externalAuth(auth: ExternalAuthInput!, client: ClientInput): String
 
   """Recover password for provided login"""
   recoverPassword(login: String!): Boolean
@@ -452,7 +491,9 @@ type product implements collection_item {
   sale_type: String
   bookable: Boolean
   is_wishlisted: Boolean
-  stickers: [product_sticker]
+  stickers: [productSticker]
+  tags: [productTag]
+  vendor: vendor
 }
 
 """Product attribute"""
@@ -487,17 +528,13 @@ type product_option_value {
   modifier_value: Float
 }
 
-"""Product option"""
-type product_sticker {
-  name: String
-  text_color: String
-  bg_color: String
-}
-
 """Products filter input"""
 input products_filter_input {
   """Search query string"""
   searchFilter: String
+
+  """Search enabled items"""
+  enabled: Boolean
 
   """Search products by stock status"""
   stockFilter: Boolean
@@ -520,17 +557,34 @@ input products_filter_input {
   """Search new arrived products"""
   new_arrivals: Boolean
 
-  """Search products on sale"""
+  """Search products on sale. Requires CDev-Sale addon."""
   sale: Boolean
 
-  """Search enabled products"""
-  enabled: Boolean
+  """Search products by tag. Requires XC-ProductTags addon."""
+  tagFilter: String
+
+  """Search products by vendor id. Requires XC-MultiVendor addon."""
+  vendorId: ID
 
   """Search products by stock status"""
   priceFilter: value_range_input
 
   """Order by"""
   orderByFilter: list_order_filter
+}
+
+"""Product option"""
+type productSticker {
+  name: String
+  text_color: String
+  bg_color: String
+}
+
+"""Product tag"""
+type productTag {
+  id: ID
+  name: String
+  position: Int
 }
 
 """Profile field (aka addressField) model"""
@@ -609,13 +663,19 @@ type Query {
     id: ID
   ): user
 
-  """FAQ"""
+  """Product tags. Requires XC-ProductTags addon."""
+  productTags: [productTag]
+
+  """FAQ items. Requires Guru-FAQ addon."""
   faq: [faq]
 
-  """Offers list"""
+  """Offers list. Requires CSI-MakeAnOffer addon."""
   offers: [offer]
 
-  """Wishlist"""
+  """Vendors list. Requires XC-MultiVendor addon."""
+  vendors: [vendor]
+
+  """Wishlist. Requires QSL-MyWishlist addon."""
   wishlist: wishlist
 
   """Application configuration"""
@@ -795,6 +855,17 @@ input value_range_input {
 
   """To value"""
   to: Float
+}
+
+"""Vendor information model"""
+type vendor {
+  id: ID
+  email: String
+  company_name: String
+  image: String
+  location: String
+  description: String
+  description_html: String
 }
 
 """widget params data"""
