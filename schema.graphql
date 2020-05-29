@@ -368,6 +368,9 @@ type Mutation {
   """
   externalAuth(auth: ExternalAuthInput!, client: ClientInput): String
 
+  """Merge anonymous profile with current logged in registered profile"""
+  mergeProfiles(anonymous_jwt: String): Boolean
+
   """Recover password for provided login"""
   recoverPassword(login: String!): Boolean
 
